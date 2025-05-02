@@ -61,6 +61,23 @@ const MessageItem: React.FC<MessageItemProps> = ({
     setIsEditing(false);
     setEditContent(content);
   };
+  
+  // キーボードイベントハンドラ
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // ⌘+Enter / Ctrl+Enterで保存
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      handleSave();
+      return;
+    }
+    
+    // Escapeで編集キャンセル
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      handleCancel();
+      return;
+    }
+  };
   return (
     <div className={`p-3 md:p-4 border-b border-gray-200 dark:border-gray-700 ${isArchived ? 'bg-gray-50 dark:bg-gray-800/50' : 'bg-white dark:bg-gray-800'}`}>
       {/* メッセージヘッダー */}
@@ -152,12 +169,14 @@ const MessageItem: React.FC<MessageItemProps> = ({
             <textarea
               value={editContent}
               onChange={(e) => setEditContent(e.target.value)}
+              onKeyDown={handleKeyDown}
               className="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               rows={4}
               autoFocus
             />
             <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               タスクとして設定するには、テキストの先頭に[]を追加してください。
+              ⌘+Enter / Ctrl+Enterで保存。
             </div>
           </div>
         )}

@@ -90,29 +90,53 @@ const MessageItem: React.FC<MessageItemProps> = ({
             <>
               <button
                 onClick={() => onReply(id)}
-                className="text-xs text-gray-500 hover:text-primary p-1 md:p-0"
+                className="text-xs text-gray-500 hover:text-primary p-1 md:p-0 flex items-center"
+                aria-label="スレッド"
               >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                </svg>
                 スレッド
               </button>
               {onEdit && (
                 <button
                   onClick={handleEditStart}
-                  className="text-xs text-gray-500 hover:text-primary p-1 md:p-0"
+                  className="text-xs text-gray-500 hover:text-primary p-1 md:p-0 flex items-center"
+                  aria-label="編集"
                 >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
                   編集
                 </button>
               )}
               <button
                 onClick={() => onArchiveToggle(id)}
-                className="text-xs text-gray-500 hover:text-primary p-1 md:p-0"
+                className="text-xs text-gray-500 hover:text-primary p-1 md:p-0 flex items-center"
+                aria-label={isArchived ? "アーカイブ解除" : "アーカイブ"}
               >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  {isArchived ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                  )}
+                </svg>
                 {isArchived ? 'アーカイブ解除' : 'アーカイブ'}
               </button>
               {onTaskStatusToggle && (
                 <button
                   onClick={() => onTaskStatusToggle(id)}
-                  className="text-xs text-gray-500 hover:text-primary p-1 md:p-0"
+                  className="text-xs text-gray-500 hover:text-primary p-1 md:p-0 flex items-center"
+                  aria-label={isTask ? "タスク解除" : "タスク化"}
                 >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    {isTask ? (
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    ) : (
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                    )}
+                  </svg>
                   {isTask ? 'タスク解除' : 'タスク化'}
                 </button>
               )}

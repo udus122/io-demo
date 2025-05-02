@@ -43,6 +43,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(content);
+  const [isHovered, setIsHovered] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   
   // テキストエリアの高さを内容に合わせて自動調整する関数
@@ -391,7 +392,17 @@ const MessageItem: React.FC<MessageItemProps> = ({
     }
   };
   return (
-    <div className={`p-3 md:p-4 border-b border-gray-200 dark:border-gray-700 ${isArchived ? 'bg-gray-50 dark:bg-gray-800/50' : 'bg-white dark:bg-gray-800'}`}>
+    <div 
+      className={`p-3 md:p-4 border-b transition-all duration-200 ease-in-out
+        ${isHovered 
+          ? 'bg-gray-50 dark:bg-gray-700/50 border-gray-300 dark:border-gray-600 shadow-sm' 
+          : `${isArchived ? 'bg-gray-50 dark:bg-gray-800/50' : 'bg-white dark:bg-gray-800'} border-gray-200 dark:border-gray-700`
+        }
+      `}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      style={{ cursor: 'default' }}
+    >
       {/* メッセージヘッダー */}
       <div className="flex justify-between items-start mb-2">
         <div className="text-xs text-gray-500 dark:text-gray-400">

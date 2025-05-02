@@ -19,18 +19,30 @@ const FilterBar: React.FC = () => {
       {/* アーカイブフィルター - ON/OFFボタン */}
       <div className="flex items-center space-x-1">
         <button 
-          onClick={() => handleArchiveFilterChange(archiveFilter === 'unarchived' ? 'all' : 'unarchived')}
+          onClick={() => handleArchiveFilterChange(archiveFilter === 'all' ? 'unarchived' : 'all')}
           className={`px-2 py-1 text-xs rounded-md flex items-center ${
-            archiveFilter === 'unarchived' 
+            archiveFilter === 'all' 
               ? 'bg-primary text-white' 
               : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600'
           }`}
-          aria-label={archiveFilter === 'unarchived' ? "アーカイブを含めて表示" : "アーカイブ以外を表示"}
+          aria-label={archiveFilter === 'all' ? "アーカイブ済みを非表示" : "アーカイブ済みを表示"}
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-          </svg>
-          <span className="ml-1 hidden sm:inline">アーカイブ以外</span>
+          {archiveFilter === 'all' ? (
+            <>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3l18 18" />
+              </svg>
+              <span className="ml-1 hidden sm:inline">アーカイブ済みを非表示</span>
+            </>
+          ) : (
+            <>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+              </svg>
+              <span className="ml-1 hidden sm:inline">アーカイブ済みを表示</span>
+            </>
+          )}
         </button>
       </div>
 

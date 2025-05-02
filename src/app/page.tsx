@@ -176,7 +176,7 @@ const MainContent = () => {
 
                 {/* メッセージ入力欄 - スレッド非表示時または常にデスクトップで表示、モバイルではsticky */}
                 <div className={`${activeThreadId ? 'hidden md:block' : ''} mt-auto sticky bottom-0 z-10`}>
-                  <MessageInput onSendMessage={handleSendMessage} />
+                  <MessageInput onSendMessage={handleSendMessage} taskFilter={taskFilter} />
                 </div>
               </div>
 
@@ -208,6 +208,7 @@ const MainContent = () => {
                       onSendMessage={handleSendReply} 
                       replyToId={activeThreadId}
                       placeholder="返信を入力..."
+                      taskFilter={taskFilter}
                     />
                   </div>
                 </div>

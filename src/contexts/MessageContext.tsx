@@ -182,11 +182,8 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
       // 未完了タスクのみをフィルタリング
       filteredMessages = filteredMessages.filter(msg => msg.isTask && !msg.isCompleted);
     } else if (taskFilter === 'all') {
-      // タスクフィルターなし - デフォルトでは完了済みタスクを非表示にする
-      if (archiveFilter === 'unarchived') {
-        // アーカイブされていないメッセージの場合、完了済みタスクを非表示にする
-        filteredMessages = filteredMessages.filter(msg => !msg.isTask || !msg.isCompleted);
-      }
+      // タスクフィルターなし - すべてのメッセージを表示（完了済みタスクも含む）
+      // 特別なフィルタリングは行わない
     }
 
     // タグでフィルタリング

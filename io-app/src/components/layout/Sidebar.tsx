@@ -41,6 +41,14 @@ const Sidebar: React.FC<SidebarProps> = ({ tags, onTagSelect, onFilterChange }) 
           >
             アーカイブのみ
           </button>
+          <button 
+            onClick={() => onFilterChange('tasks')}
+            className={`w-full text-left px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 ${
+              activeFilter === 'tasks' ? 'bg-gray-100 dark:bg-gray-700 font-medium' : ''
+            }`}
+          >
+            タスクのみ
+          </button>
         </div>
       </div>
       

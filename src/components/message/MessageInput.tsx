@@ -1,4 +1,4 @@
-import React, { useState, KeyboardEvent, useRef, useEffect, MouseEvent, useCallback } from 'react';
+import React, { useState, KeyboardEvent, useRef, useEffect, MouseEvent, useCallback, useMemo } from 'react';
 
 interface MessageInputProps {
   onSendMessage: (content: string) => void;
@@ -415,51 +415,57 @@ const MessageInput: React.FC<MessageInputProps> = ({
     }
   };
 
+  // プラットフォームがMacかどうかを判定
+  const isMac = useMemo(() => {
+    if (typeof navigator === 'undefined') return false;
+    return navigator.platform.indexOf('Mac') !== -1;
+  }, []);
+
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    // ⌘+Enter / Ctrl+Enterでメッセージを送信
-    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+    // Macでは⌘+Enter、Windowsではctrl+Enterでメッセージを送信
+    if (e.key === 'Enter' && ((isMac && e.metaKey) || (!isMac && e.ctrlKey))) {
       e.preventDefault();
       handleSubmit();
       return;
     }
     
-    // ⌘+Z / Ctrl+Z でundo
-    if (e.key === 'z' && (e.metaKey || e.ctrlKey) && !e.shiftKey) {
+    // Macでは⌘+Z、WindowsではCtrl+Z でundo
+    if (e.key === 'z' && ((isMac && e.metaKey) || (!isMac && e.ctrlKey)) && !e.shiftKey) {
       e.preventDefault();
       handleUndo();
       return;
     }
     
-    // ⌘+Shift+Z / Ctrl+Shift+Z でredo
-    if (e.key === 'z' && (e.metaKey || e.ctrlKey) && e.shiftKey) {
+    // Macでは⌘+Shift+Z、WindowsではCtrl+Shift+Z でredo
+    if (e.key === 'z' && ((isMac && e.metaKey) || (!isMac && e.ctrlKey)) && e.shiftKey) {
       e.preventDefault();
       handleRedo();
       return;
     }
     
-    // ⌘+B / Ctrl+B で太字
-    if (e.key === 'b' && (e.metaKey || e.ctrlKey)) {
+    // Macでは⌘+B、WindowsではCtrl+B で太字
+    if (e.key === 'b' && ((isMac && e.metaKey) || (!isMac && e.ctrlKey))) {
       e.preventDefault();
       applyFormat('bold');
       return;
     }
     
-    // ⌘+I / Ctrl+I で斜体
-    if (e.key === 'i' && (e.metaKey || e.ctrlKey)) {
+    // Macでは⌘+I、WindowsではCtrl+I で斜体
+    if (e.key === 'i' && ((isMac && e.metaKey) || (!isMac && e.ctrlKey))) {
       e.preventDefault();
       applyFormat('italic');
       return;
     }
     
-    // ⌘+U / Ctrl+U で下線
-    if (e.key === 'u' && (e.metaKey || e.ctrlKey)) {
+    // Macでは⌘+U、WindowsではCtrl+U で下線
+    if (e.key === 'u' && ((isMac && e.metaKey) || (!isMac && e.ctrlKey))) {
       e.preventDefault();
       applyFormat('underline');
       return;
     }
     
-    // ⌘+X / Ctrl+X で取り消し線（選択範囲がある場合のみ）
-    if (e.key === 'x' && (e.metaKey || e.ctrlKey) && e.currentTarget.selectionStart !== e.currentTarget.selectionEnd) {
+    // Macでは⌘+X、WindowsではCtrl+X で取り消し線（選択範囲がある場合のみ）
+    if (e.key === 'x' && ((isMac && e.metaKey) || (!isMac && e.ctrlKey)) && e.currentTarget.selectionStart !== e.currentTarget.selectionEnd) {
       e.preventDefault();
       applyFormat('strikethrough');
       return;
@@ -652,7 +658,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
         {/* デスクトップ表示用のコントロールエリア（md以上の画面サイズで表示） */}
         <div className="hidden md:flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-700">
           <div className="text-xs text-gray-500 dark:text-gray-400">
-            {replyToId ? '返信を作成中...' : 'テキストの先頭に[]を追加するとタスクになります。 | ⌘+Enter / Ctrl+Enterで送信'}
+            {replyToId ? '返信を作成中...' : `テキストの先頭に[]を追加するとタスクになります。 | ${isMac ? '⌘+Enter' : 'Ctrl+Enter'}で送信`}
           </div>
           <button
             onClick={handleSubmit}

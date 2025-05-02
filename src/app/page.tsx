@@ -153,7 +153,7 @@ const MainContent = () => {
               `}>
                 {/* メッセージリスト - モバイルではスレッド表示時に非表示 */}
                 <div className={`
-                  flex-1 overflow-auto
+                  flex-1 overflow-auto flex
                   ${activeThreadId ? 'hidden md:block' : ''}
                 `}>
                   <MessageList

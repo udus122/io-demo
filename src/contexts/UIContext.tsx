@@ -9,6 +9,7 @@ interface UIContextType {
   activeThreadId: string | null;
   channels: Channel[];
   activeChannelId: string;
+  isSidebarVisible: boolean;
   setArchiveFilter: (filter: string) => void;
   setTaskFilter: (filter: string) => void;
   setSelectedTag: (tag: string | null) => void;
@@ -16,6 +17,7 @@ interface UIContextType {
   addChannel: (name: string) => void;
   deleteChannel: (channelId: string) => boolean;
   setActiveChannelId: (channelId: string) => void;
+  toggleSidebar: () => void;
 }
 
 const UIContext = createContext<UIContextType | undefined>(undefined);
@@ -39,6 +41,7 @@ export const UIProvider: React.FC<UIProviderProps> = ({ children }) => {
   const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
   const [channels, setChannels] = useState<Channel[]>([]);
   const [activeChannelId, setActiveChannelId] = useState<string>('');
+  const [isSidebarVisible, setIsSidebarVisible] = useState<boolean>(true);
 
   // LocalStorageからチャンネルを読み込む
   useEffect(() => {
@@ -110,6 +113,11 @@ export const UIProvider: React.FC<UIProviderProps> = ({ children }) => {
     return true;
   };
 
+  // サイドバーの表示/非表示を切り替える
+  const toggleSidebar = () => {
+    setIsSidebarVisible(prev => !prev);
+  };
+
   return (
     <UIContext.Provider
       value={{
@@ -119,6 +127,7 @@ export const UIProvider: React.FC<UIProviderProps> = ({ children }) => {
         activeThreadId,
         channels,
         activeChannelId,
+        isSidebarVisible,
         setArchiveFilter,
         setTaskFilter,
         setSelectedTag,
@@ -126,6 +135,7 @@ export const UIProvider: React.FC<UIProviderProps> = ({ children }) => {
         addChannel,
         deleteChannel,
         setActiveChannelId,
+        toggleSidebar,
       }}
     >
       {children}

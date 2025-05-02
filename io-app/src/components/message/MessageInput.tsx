@@ -21,9 +21,61 @@ const MessageInput: React.FC<MessageInputProps> = ({
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    // ⌘+Enter / Ctrl+Enterでメッセージを送信
     if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
       e.preventDefault();
       handleSubmit();
+      return;
+    }
+
+    // マークダウンリスト自動継続機能
+    if (e.key === 'Enter' && !e.shiftKey && !e.metaKey && !e.ctrlKey) {
+      const textarea = e.currentTarget;
+      const { value, selectionStart } = textarea;
+      
+      // 現在行の開始位置を取得
+      const currentLineStart = value.lastIndexOf('\n', selectionStart - 1) + 1;
+      // 現在行のテキストを取得
+      const currentLine = value.substring(currentLineStart, selectionStart);
+      
+      // マークダウンリスト記号のパターン
+      const listPattern = /^(\s*)(-|\*|\+|(\d+)\.) (\S+.*)?$/;
+      const match = currentLine.match(listPattern);
+      
+      if (match) {
+        const [, indent, marker, number, content] = match;
+        
+        // 空のリスト項目の場合はリストを終了
+        if (!content) {
+          e.preventDefault();
+          const newValue = value.substring(0, currentLineStart) + value.substring(selectionStart);
+          setMessage(newValue);
+          setTimeout(() => {
+            textarea.setSelectionRange(currentLineStart, currentLineStart);
+          }, 0);
+          return;
+        }
+        
+        // 次の行に同じリスト記号を挿入
+        e.preventDefault();
+        
+        // 番号付きリストの場合は番号をインクリメント
+        let nextMarker = marker;
+        if (number) {
+          const nextNumber = parseInt(number) + 1;
+          nextMarker = nextNumber + '.';
+        }
+        
+        const insertion = `\n${indent}${nextMarker} `;
+        const newValue = value.substring(0, selectionStart) + insertion + value.substring(selectionStart);
+        setMessage(newValue);
+        
+        // カーソル位置を更新
+        const newPosition = selectionStart + insertion.length;
+        setTimeout(() => {
+          textarea.setSelectionRange(newPosition, newPosition);
+        }, 0);
+      }
     }
   };
 

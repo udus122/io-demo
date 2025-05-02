@@ -3,12 +3,14 @@ import { Channel } from '@/types';
 import { v4 as uuidv4 } from 'uuid';
 
 interface UIContextType {
-  activeFilter: string;
+  archiveFilter: string;
+  taskFilter: string;
   selectedTag: string | null;
   activeThreadId: string | null;
   channels: Channel[];
   activeChannelId: string;
-  setActiveFilter: (filter: string) => void;
+  setArchiveFilter: (filter: string) => void;
+  setTaskFilter: (filter: string) => void;
   setSelectedTag: (tag: string | null) => void;
   setActiveThreadId: (threadId: string | null) => void;
   addChannel: (name: string) => void;
@@ -30,7 +32,8 @@ interface UIProviderProps {
 }
 
 export const UIProvider: React.FC<UIProviderProps> = ({ children }) => {
-  const [activeFilter, setActiveFilter] = useState<string>('unarchived');
+  const [archiveFilter, setArchiveFilter] = useState<string>('unarchived');
+  const [taskFilter, setTaskFilter] = useState<string>('uncompleted-tasks');
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
   const [channels, setChannels] = useState<Channel[]>([]);
@@ -57,14 +60,14 @@ export const UIProvider: React.FC<UIProviderProps> = ({ children }) => {
         console.error('Failed to parse stored channels:', error);
       }
     } else {
-      // チャンネルがない場合は「Inbox」チャンネルを作成
-      const inboxChannel: Channel = {
-        id: uuidv4(),
-        name: 'Inbox',
+      // チャンネルがない場合は「All」チャンネルを作成
+      const allChannel: Channel = {
+        id: 'all', // 特別なID「all」を使用
+        name: 'All',
         createdAt: new Date()
       };
-      setChannels([inboxChannel]);
-      setActiveChannelId(inboxChannel.id);
+      setChannels([allChannel]);
+      setActiveChannelId(allChannel.id);
     }
   }, []);
 
@@ -77,8 +80,11 @@ export const UIProvider: React.FC<UIProviderProps> = ({ children }) => {
 
   // 新しいチャンネルを追加
   const addChannel = (name: string) => {
+    // 'all'は予約済みIDなので、別のIDを生成
+    const newId = name.toLowerCase() === 'all' ? `channel-${uuidv4()}` : uuidv4();
+    
     const newChannel: Channel = {
-      id: uuidv4(),
+      id: newId,
       name,
       createdAt: new Date()
     };
@@ -89,12 +95,14 @@ export const UIProvider: React.FC<UIProviderProps> = ({ children }) => {
   return (
     <UIContext.Provider
       value={{
-        activeFilter,
+        archiveFilter,
+        taskFilter,
         selectedTag,
         activeThreadId,
         channels,
         activeChannelId,
-        setActiveFilter,
+        setArchiveFilter,
+        setTaskFilter,
         setSelectedTag,
         setActiveThreadId,
         addChannel,

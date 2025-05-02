@@ -15,7 +15,7 @@ interface MessageContextType {
   getAllTags: () => string[];
   getThreadReplies: (parentId: string) => Message[];
   getMessageById: (id: string) => Message | undefined;
-  filterMessages: (filter: string, selectedTag?: string) => Message[];
+  filterMessages: (archiveFilter: string, taskFilter: string, selectedTag?: string) => Message[];
 }
 
 const MessageContext = createContext<MessageContextType | undefined>(undefined);
@@ -160,24 +160,31 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
   };
 
   // メッセージをフィルタリング
-  const filterMessages = (filter: string, selectedTag?: string) => {
-    // まず現在のチャンネルのメッセージのみをフィルタリング
-    let filteredMessages = messages.filter(msg => msg.channelId === activeChannelId);
+  const filterMessages = (archiveFilter: string, taskFilter: string, selectedTag?: string) => {
+    // 「all」チャンネルの場合は全てのメッセージ、それ以外は特定チャンネルのメッセージをフィルタリング
+    let filteredMessages = activeChannelId === 'all'
+      ? messages // 「all」チャンネルの場合は全てのメッセージ
+      : messages.filter(msg => msg.channelId === activeChannelId);
 
     // アーカイブ状態でフィルタリング
-    if (filter === 'archived') {
+    if (archiveFilter === 'archived') {
       filteredMessages = filteredMessages.filter(msg => msg.isArchived);
-    } else if (filter === 'unarchived') {
+    } else if (archiveFilter === 'unarchived') {
       filteredMessages = filteredMessages.filter(msg => !msg.isArchived);
-    } else if (filter === 'tasks') {
+    }
+
+    // タスク状態でフィルタリング
+    if (taskFilter === 'tasks') {
       // タスクのみをフィルタリング
       filteredMessages = filteredMessages.filter(msg => msg.isTask);
-    } else if (filter === 'completed-tasks') {
+    } else if (taskFilter === 'completed-tasks') {
       // 完了タスクのみをフィルタリング
       filteredMessages = filteredMessages.filter(msg => msg.isTask && msg.isCompleted);
-    } else if (filter === 'uncompleted-tasks') {
+    } else if (taskFilter === 'uncompleted-tasks') {
       // 未完了タスクのみをフィルタリング
       filteredMessages = filteredMessages.filter(msg => msg.isTask && !msg.isCompleted);
+    } else if (taskFilter === 'all') {
+      // タスクフィルターなし
     }
 
     // タグでフィルタリング

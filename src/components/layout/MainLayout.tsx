@@ -23,7 +23,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, sidebar }) => {
         transform transition-all duration-300 ease-in-out
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
         ${isSidebarVisible ? 'md:translate-x-0' : 'md:translate-x-0'}
-        border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800
+        border-r border-gray-200 dark:border-gray-700 bg-white bg-opacity-95 dark:bg-gray-800 dark:bg-opacity-95
       `}>
         {/* サイドバーヘッダー */}
         <div className={`
@@ -70,10 +70,10 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, sidebar }) => {
         </div>
       </div>
       
-      {/* オーバーレイ - モバイルでサイドバー表示時のみ表示 */}
+      {/* オーバーレイ - モバイルでサイドバー表示時のみ表示（透明度を下げて背景を見えるようにする） */}
       {isSidebarOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden"
+          className="fixed inset-0 bg-black bg-opacity-20 z-20 md:hidden"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}

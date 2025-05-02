@@ -86,10 +86,16 @@ const Sidebar: React.FC<SidebarProps> = ({ tags, onTagSelect, onArchiveFilterCha
               <button
                 onClick={() => handleChannelSelect(channel.id)}
                 className={`flex-1 text-left px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center ${
-                  activeChannelId === channel.id ? 'bg-gray-100 dark:bg-gray-700 font-medium' : ''
+                  activeChannelId === channel.id 
+                    ? 'bg-primary bg-opacity-20 dark:bg-primary dark:bg-opacity-20 text-primary dark:text-primary-light font-medium' 
+                    : ''
                 }`}
               >
-                <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
+                <span className={`w-2 h-2 rounded-full mr-2 ${
+                  activeChannelId === channel.id 
+                    ? 'bg-primary' 
+                    : 'bg-gray-400 dark:bg-gray-500'
+                }`}></span>
                 {channel.name}
               </button>
               {/* 「All」チャンネル以外は削除ボタンを表示 */}

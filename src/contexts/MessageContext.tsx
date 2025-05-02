@@ -70,10 +70,17 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
       tags.push(match[1]);
     }
 
-    // メッセージが[]で始まる場合はタスクとして認識
-    const isTask = content.trim().startsWith('[]');
-    // タスクの場合は[]を除去したコンテンツを使用
-    const cleanContent = isTask ? content.replace(/^\[\]/, '').trim() : content;
+    // メッセージが[]または[x]で始まる場合はタスクとして認識
+    const trimmedContent = content.trim();
+    const isTask = trimmedContent.startsWith('[]') || trimmedContent.startsWith('[x]');
+    // タスクの完了状態を判定
+    const isCompleted = trimmedContent.startsWith('[x]');
+    // タスクの場合は[]または[x]を除去したコンテンツを使用
+    const cleanContent = isTask 
+      ? trimmedContent.startsWith('[x]') 
+        ? content.replace(/^\[x\]/, '').trim() 
+        : content.replace(/^\[\]/, '').trim() 
+      : content;
 
     const newMessageId = uuidv4();
     const newMessage: Message = {
@@ -84,7 +91,7 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
       isArchived: false,
       parentId,
       isTask,
-      isCompleted: false,
+      isCompleted: isCompleted,
       channelId: activeChannelId
     };
 
@@ -204,15 +211,22 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
       tags.push(match[1]);
     }
 
-    // メッセージが[]で始まる場合はタスクとして認識
-    const isTask = newContent.trim().startsWith('[]');
-    // タスクの場合は[]を除去したコンテンツを使用
-    const cleanContent = isTask ? newContent.replace(/^\[\]/, '').trim() : newContent;
+    // メッセージが[]または[x]で始まる場合はタスクとして認識
+    const trimmedContent = newContent.trim();
+    const isTask = trimmedContent.startsWith('[]') || trimmedContent.startsWith('[x]');
+    // タスクの完了状態を判定
+    const isCompleted = trimmedContent.startsWith('[x]');
+    // タスクの場合は[]または[x]を除去したコンテンツを使用
+    const cleanContent = isTask 
+      ? trimmedContent.startsWith('[x]') 
+        ? newContent.replace(/^\[x\]/, '').trim() 
+        : newContent.replace(/^\[\]/, '').trim() 
+      : newContent;
 
     setMessages(prevMessages =>
       prevMessages.map(msg =>
         msg.id === messageId
-          ? { ...msg, content: cleanContent, tags, isTask }
+          ? { ...msg, content: cleanContent, tags, isTask, isCompleted: isTask ? isCompleted : msg.isCompleted }
           : msg
       )
     );

@@ -1,4 +1,4 @@
-import React, { useState, KeyboardEvent } from 'react';
+import React, { useState, KeyboardEvent, useRef, useEffect } from 'react';
 
 interface MessageInputProps {
   onSendMessage: (content: string) => void;
@@ -12,6 +12,25 @@ const MessageInput: React.FC<MessageInputProps> = ({
   placeholder = 'メッセージを入力...'
 }) => {
   const [message, setMessage] = useState('');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  
+  // テキストエリアの高さを内容に合わせて自動調整する関数
+  const adjustTextareaHeight = () => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      // 一度高さをリセットして正確な scrollHeight を取得
+      textarea.style.height = '0px';
+      // scrollHeight に基づいて高さを設定（最小高さは3行分）
+      const minHeight = 72; // 3行分の高さ（おおよその値）
+      const newHeight = Math.max(textarea.scrollHeight, minHeight);
+      textarea.style.height = `${newHeight}px`;
+    }
+  };
+  
+  // メッセージが変更されたときに高さを調整
+  useEffect(() => {
+    adjustTextareaHeight();
+  }, [message]);
 
   const handleSubmit = () => {
     if (message.trim()) {
@@ -83,12 +102,13 @@ const MessageInput: React.FC<MessageInputProps> = ({
     <div className="border-t border-gray-200 dark:border-gray-700 p-2 md:p-4 bg-white dark:bg-gray-800">
       <div className="flex flex-col rounded-lg border border-gray-300 dark:border-gray-600 overflow-hidden">
         <textarea
+          ref={textareaRef}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          className="w-full p-2 md:p-3 resize-none focus:outline-none bg-transparent"
-          rows={3}
+          className="w-full p-2 md:p-3 resize-none focus:outline-none bg-transparent min-h-[72px]"
+          style={{ overflow: 'hidden' }}
         />
         <div className="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-700">
           <div className="hidden sm:block text-xs text-gray-500 dark:text-gray-400">

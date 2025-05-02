@@ -30,10 +30,12 @@ const MainContent = () => {
   } = useMessages();
   
   const { 
-    activeFilter, 
+    archiveFilter,
+    taskFilter, 
     selectedTag, 
     activeThreadId, 
-    setActiveFilter, 
+    setArchiveFilter,
+    setTaskFilter, 
     setSelectedTag, 
     setActiveThreadId 
   } = useUI();
@@ -65,9 +67,15 @@ const MainContent = () => {
     setSelectedTag(tag);
   };
 
-  // フィルター変更
-  const handleFilterChange = (filter: string) => {
-    setActiveFilter(filter);
+  // アーカイブフィルター変更
+  const handleArchiveFilterChange = (filter: string) => {
+    setArchiveFilter(filter);
+    setSelectedTag(null);
+  };
+
+  // タスクフィルター変更
+  const handleTaskFilterChange = (filter: string) => {
+    setTaskFilter(filter);
     setSelectedTag(null);
   };
 
@@ -82,7 +90,7 @@ const MainContent = () => {
   };
 
   // フィルタリングされたメッセージ
-  const filteredMessages = filterMessages(activeFilter, selectedTag || undefined);
+  const filteredMessages = filterMessages(archiveFilter, taskFilter, selectedTag || undefined);
 
   // アクティブなスレッドの親メッセージと返信
   const activeThreadParent = activeThreadId ? getMessageById(activeThreadId) || null : null;
@@ -109,7 +117,8 @@ const MainContent = () => {
         <Sidebar
           tags={getAllTags()}
           onTagSelect={handleTagClick}
-          onFilterChange={handleFilterChange}
+          onArchiveFilterChange={handleArchiveFilterChange}
+          onTaskFilterChange={handleTaskFilterChange}
         />
       }
     >

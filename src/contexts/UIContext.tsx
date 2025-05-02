@@ -33,7 +33,7 @@ interface UIProviderProps {
 
 export const UIProvider: React.FC<UIProviderProps> = ({ children }) => {
   const [archiveFilter, setArchiveFilter] = useState<string>('unarchived');
-  const [taskFilter, setTaskFilter] = useState<string>('uncompleted-tasks');
+  const [taskFilter, setTaskFilter] = useState<string>('all');
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
   const [channels, setChannels] = useState<Channel[]>([]);

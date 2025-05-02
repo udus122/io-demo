@@ -4,11 +4,12 @@ import { useUI } from '@/contexts/UIContext';
 interface SidebarProps {
   tags: string[];
   onTagSelect: (tag: string) => void;
-  onFilterChange: (filter: string) => void;
+  onArchiveFilterChange: (filter: string) => void;
+  onTaskFilterChange: (filter: string) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ tags, onTagSelect, onFilterChange }) => {
-  const { activeFilter, selectedTag, channels, activeChannelId, setActiveChannelId, addChannel } = useUI();
+const Sidebar: React.FC<SidebarProps> = ({ tags, onTagSelect, onArchiveFilterChange, onTaskFilterChange }) => {
+  const { archiveFilter, taskFilter, selectedTag, channels, activeChannelId, setActiveChannelId, addChannel } = useUI();
   const [newChannelName, setNewChannelName] = useState('');
   const [isAddingChannel, setIsAddingChannel] = useState(false);
 

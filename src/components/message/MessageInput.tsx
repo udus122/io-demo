@@ -196,8 +196,10 @@ const MessageInput: React.FC<MessageInputProps> = ({
             formattedText = `- `;
             const newValue = value.substring(0, currentLineStart) + formattedText + value.substring(currentLineStart);
             setMessage(newValue);
+            // カーソル位置を調整（元の位置に対してリストマークの長さ分オフセット）
+            const newPosition = selectionStart + 2; // 「- 」の長さは2
             setTimeout(() => {
-              textarea.setSelectionRange(currentLineStart + 2, currentLineStart + 2);
+              textarea.setSelectionRange(newPosition, newPosition);
             }, 0);
           }
           return;
@@ -234,8 +236,10 @@ const MessageInput: React.FC<MessageInputProps> = ({
             formattedText = `1. `;
             const newValue = value.substring(0, currentLineStart) + formattedText + value.substring(currentLineStart);
             setMessage(newValue);
+            // カーソル位置を調整（元の位置に対してリストマークの長さ分オフセット）
+            const newPosition = selectionStart + 3; // 「1. 」の長さは3
             setTimeout(() => {
-              textarea.setSelectionRange(currentLineStart + 3, currentLineStart + 3);
+              textarea.setSelectionRange(newPosition, newPosition);
             }, 0);
           }
           return;

@@ -361,6 +361,34 @@ const MessageItem: React.FC<MessageItemProps> = ({
       handleCancel();
       return;
     }
+    
+    // ⌘+B / Ctrl+B で太字
+    if (e.key === 'b' && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      applyFormat('bold');
+      return;
+    }
+    
+    // ⌘+I / Ctrl+I で斜体
+    if (e.key === 'i' && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      applyFormat('italic');
+      return;
+    }
+    
+    // ⌘+U / Ctrl+U で下線
+    if (e.key === 'u' && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      applyFormat('underline');
+      return;
+    }
+    
+    // ⌘+X / Ctrl+X で取り消し線（選択範囲がある場合のみ）
+    if (e.key === 'x' && (e.metaKey || e.ctrlKey) && e.currentTarget.selectionStart !== e.currentTarget.selectionEnd) {
+      e.preventDefault();
+      applyFormat('strikethrough');
+      return;
+    }
   };
   return (
     <div className={`p-3 md:p-4 border-b border-gray-200 dark:border-gray-700 ${isArchived ? 'bg-gray-50 dark:bg-gray-800/50' : 'bg-white dark:bg-gray-800'}`}>

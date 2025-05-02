@@ -420,6 +420,34 @@ const MessageInput: React.FC<MessageInputProps> = ({
       handleRedo();
       return;
     }
+    
+    // ⌘+B / Ctrl+B で太字
+    if (e.key === 'b' && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      applyFormat('bold');
+      return;
+    }
+    
+    // ⌘+I / Ctrl+I で斜体
+    if (e.key === 'i' && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      applyFormat('italic');
+      return;
+    }
+    
+    // ⌘+U / Ctrl+U で下線
+    if (e.key === 'u' && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      applyFormat('underline');
+      return;
+    }
+    
+    // ⌘+X / Ctrl+X で取り消し線（選択範囲がある場合のみ）
+    if (e.key === 'x' && (e.metaKey || e.ctrlKey) && e.currentTarget.selectionStart !== e.currentTarget.selectionEnd) {
+      e.preventDefault();
+      applyFormat('strikethrough');
+      return;
+    }
 
     // Tabキーによるインデント/アウトデント機能
     if (e.key === 'Tab') {

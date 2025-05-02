@@ -42,8 +42,6 @@ const Sidebar: React.FC<SidebarProps> = ({ tags, onTagSelect, onArchiveFilterCha
 
   return (
     <div className="flex flex-col h-full p-4">
-      <h1 className="text-2xl font-bold mb-6 text-primary">IO</h1>
-      
       {/* チャンネルリスト */}
       <div>
         <div className="flex justify-between items-center mb-2">

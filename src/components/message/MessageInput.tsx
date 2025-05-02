@@ -54,6 +54,57 @@ const MessageInput: React.FC<MessageInputProps> = ({
       return;
     }
 
+    // Tabキーによるインデント/アウトデント機能
+    if (e.key === 'Tab') {
+      e.preventDefault(); // デフォルトのフォーカス移動を防止
+      
+      const textarea = e.currentTarget;
+      const { value, selectionStart, selectionEnd } = textarea;
+      
+      // 現在行の開始位置と終了位置を取得
+      const currentLineStart = value.lastIndexOf('\n', selectionStart - 1) + 1;
+      const currentLineEnd = value.indexOf('\n', selectionStart);
+      const lineEnd = currentLineEnd === -1 ? value.length : currentLineEnd;
+      
+      // 現在行のテキスト
+      const currentLine = value.substring(currentLineStart, lineEnd);
+      
+      // マークダウンリスト記号のパターン
+      const listPattern = /^(\s*)(-|\*|\+|(\d+)\.) (.*)$/;
+      const match = currentLine.match(listPattern);
+      
+      if (match) {
+        if (e.shiftKey) {
+          // Shift+Tab: アウトデント（スペース2つを削除）
+          const [, indent] = match;
+          if (indent.length >= 2) {
+            // 先頭から2つのスペースを削除
+            const newLine = currentLine.substring(2);
+            const newValue = value.substring(0, currentLineStart) + newLine + value.substring(lineEnd);
+            setMessage(newValue);
+            
+            // カーソル位置を調整
+            const newPosition = Math.max(selectionStart - 2, currentLineStart);
+            setTimeout(() => {
+              textarea.setSelectionRange(newPosition, newPosition);
+            }, 0);
+          }
+        } else {
+          // Tab: インデント（スペース2つを追加）
+          const newLine = '  ' + currentLine;
+          const newValue = value.substring(0, currentLineStart) + newLine + value.substring(lineEnd);
+          setMessage(newValue);
+          
+          // カーソル位置を調整
+          const newPosition = selectionStart + 2;
+          setTimeout(() => {
+            textarea.setSelectionRange(newPosition, newPosition);
+          }, 0);
+        }
+      }
+      return;
+    }
+
     // マークダウンリスト自動継続機能
     if (e.key === 'Enter' && !e.shiftKey && !e.metaKey && !e.ctrlKey) {
       const textarea = e.currentTarget;

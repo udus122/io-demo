@@ -27,22 +27,22 @@ const MessageItem: React.FC<MessageItemProps> = ({
   onArchiveToggle,
 }) => {
   return (
-    <div className={`p-4 border-b border-gray-200 dark:border-gray-700 ${isArchived ? 'bg-gray-50 dark:bg-gray-800/50' : 'bg-white dark:bg-gray-800'}`}>
+    <div className={`p-3 md:p-4 border-b border-gray-200 dark:border-gray-700 ${isArchived ? 'bg-gray-50 dark:bg-gray-800/50' : 'bg-white dark:bg-gray-800'}`}>
       {/* メッセージヘッダー */}
       <div className="flex justify-between items-start mb-2">
         <div className="text-xs text-gray-500 dark:text-gray-400">
           {format(createdAt, 'yyyy年MM月dd日 HH:mm', { locale: ja })}
         </div>
-        <div className="flex space-x-2">
+        <div className="flex space-x-1 md:space-x-2">
           <button
             onClick={() => onReply(id)}
-            className="text-xs text-gray-500 hover:text-primary"
+            className="text-xs text-gray-500 hover:text-primary p-1 md:p-0"
           >
             返信
           </button>
           <button
             onClick={() => onArchiveToggle(id)}
-            className="text-xs text-gray-500 hover:text-primary"
+            className="text-xs text-gray-500 hover:text-primary p-1 md:p-0"
           >
             {isArchived ? 'アーカイブ解除' : 'アーカイブ'}
           </button>

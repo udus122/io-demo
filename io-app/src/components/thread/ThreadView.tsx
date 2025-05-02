@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import MessageItem from '../message/MessageItem';
 import MessageInput from '../message/MessageInput';
 import { Message } from '@/types';
+import { useMessages } from '@/contexts/MessageContext';
 
 interface ThreadViewProps {
   parentMessage: Message | null;
@@ -20,6 +21,25 @@ const ThreadView: React.FC<ThreadViewProps> = ({
   onArchiveToggle,
   onClose,
 }) => {
+  const { lastAddedMessageId } = useMessages();
+  const repliesEndRef = useRef<HTMLDivElement>(null);
+  const [highlightedMessageId, setHighlightedMessageId] = useState<string | null>(null);
+
+  // 新しい返信が追加されたときにスクロールする
+  useEffect(() => {
+    if (lastAddedMessageId && replies.some(reply => reply.id === lastAddedMessageId) && repliesEndRef.current) {
+      repliesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      setHighlightedMessageId(lastAddedMessageId);
+      
+      // ハイライト効果を3秒後に消す
+      const timer = setTimeout(() => {
+        setHighlightedMessageId(null);
+      }, 3000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [lastAddedMessageId, replies]);
+
   if (!parentMessage) {
     return null;
   }
@@ -56,24 +76,29 @@ const ThreadView: React.FC<ThreadViewProps> = ({
       <div className="flex-1 overflow-y-auto">
         {replies.length > 0 ? (
           replies.map(reply => (
-            <MessageItem
+            <div 
               key={reply.id}
-              id={reply.id}
-              content={reply.content}
-              createdAt={reply.createdAt}
-              tags={reply.tags}
-              isArchived={reply.isArchived}
-              hasThread={false}
-              onReply={() => {}}
-              onTagClick={onTagClick}
-              onArchiveToggle={onArchiveToggle}
-            />
+              className={`transition-colors duration-1000 ${highlightedMessageId === reply.id ? 'bg-primary/10' : ''}`}
+            >
+              <MessageItem
+                id={reply.id}
+                content={reply.content}
+                createdAt={reply.createdAt}
+                tags={reply.tags}
+                isArchived={reply.isArchived}
+                hasThread={false}
+                onReply={() => {}}
+                onTagClick={onTagClick}
+                onArchiveToggle={onArchiveToggle}
+              />
+            </div>
           ))
         ) : (
           <div className="p-4 text-center text-gray-500 dark:text-gray-400">
             このスレッドにはまだ返信がありません
           </div>
         )}
+        <div ref={repliesEndRef} />
       </div>
 
       {/* 返信入力 */}

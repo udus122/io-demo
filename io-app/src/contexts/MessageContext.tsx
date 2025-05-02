@@ -4,6 +4,7 @@ import { Message } from '@/types';
 
 interface MessageContextType {
   messages: Message[];
+  lastAddedMessageId: string | null;
   addMessage: (content: string, parentId?: string | null) => void;
   addTagToMessage: (messageId: string, tag: string) => void;
   toggleArchive: (messageId: string) => void;
@@ -29,6 +30,7 @@ interface MessageProviderProps {
 
 export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) => {
   const [messages, setMessages] = useState<Message[]>([]);
+  const [lastAddedMessageId, setLastAddedMessageId] = useState<string | null>(null);
 
   // LocalStorageからメッセージを読み込む
   useEffect(() => {
@@ -63,8 +65,9 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
       tags.push(match[1]);
     }
 
+    const newMessageId = uuidv4();
     const newMessage: Message = {
-      id: uuidv4(),
+      id: newMessageId,
       content,
       createdAt: new Date(),
       tags,
@@ -73,6 +76,9 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
     };
 
     setMessages(prevMessages => [...prevMessages, newMessage]);
+    
+    // 常に最後に追加されたメッセージIDを更新（親メッセージでもスレッド返信でも）
+    setLastAddedMessageId(newMessageId);
   };
 
   // メッセージにタグを追加
@@ -139,6 +145,7 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
     <MessageContext.Provider
       value={{
         messages,
+        lastAddedMessageId,
         addMessage,
         addTagToMessage,
         toggleArchive,

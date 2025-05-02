@@ -18,6 +18,7 @@ const MainContent = () => {
   const { isSearchActive } = useSearch();
   const { 
     messages, 
+    lastAddedMessageId,
     addMessage, 
     toggleArchive, 
     getAllTags, 
@@ -118,6 +119,7 @@ const MainContent = () => {
                 onReply={handleOpenThread}
                 onTagClick={handleTagClick}
                 onArchiveToggle={toggleArchive}
+                lastAddedMessageId={lastAddedMessageId}
               />
               <MessageInput onSendMessage={handleSendMessage} />
             </div>

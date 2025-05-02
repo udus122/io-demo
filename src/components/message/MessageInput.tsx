@@ -58,16 +58,16 @@ const ListNumberIcon = ({ className = "h-5 w-5" }: { className?: string }) => (
 
 const IndentIcon = ({ className = "h-5 w-5" }: { className?: string }) => (
   <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7h18M9 12h12M9 17h12" />
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l3-3m0 6V9" fill="none" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7h18M3 12h12M3 17h12" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12l-3-3m0 6v-6" fill="none" />
   </svg>
 );
 
 const OutdentIcon = ({ className = "h-5 w-5" }: { className?: string }) => (
   <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7h18M3 12h12M3 17h12" />
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12l-3-3m0 6v-6" fill="none" />
-  </svg>
+  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7h18M9 12h12M9 17h12" />
+  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l3-3m0 6V9" fill="none" />
+</svg>
 );
 
 // フォーマットタイプの定義
@@ -125,10 +125,10 @@ const MessageInput: React.FC<MessageInputProps> = ({
           : selectionEnd + 4;
         break;
       case 'underline':
-        formattedText = `<u>${selectedText}</u>`;
+        formattedText = `__${selectedText}__`;
         newCursorPos = selectionStart === selectionEnd 
-          ? selectionStart + 3 
-          : selectionEnd + 7;
+          ? selectionStart + 2 
+          : selectionEnd + 4;
         break;
       case 'bulletList':
         // 選択範囲がある場合は各行に箇条書きを適用

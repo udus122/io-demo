@@ -165,12 +165,11 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
       : messages.filter(msg => msg.channelId === activeChannelId);
 
     // アーカイブ状態でフィルタリング
-    if (archiveFilter === 'archived') {
-      filteredMessages = filteredMessages.filter(msg => msg.isArchived);
-    } else {
-      // デフォルトは 'unarchived'
+    if (archiveFilter === 'unarchived') {
+      // 'unarchived'の場合はアーカイブされていないメッセージのみ表示
       filteredMessages = filteredMessages.filter(msg => !msg.isArchived);
     }
+    // 'all'の場合はアーカイブ状態に関わらずすべてのメッセージを表示（フィルタリングなし）
 
     // タスク状態でフィルタリング
     if (taskFilter === 'tasks') {

@@ -16,35 +16,21 @@ const FilterBar: React.FC = () => {
 
   return (
     <div className="p-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 flex flex-wrap gap-2">
-      {/* アーカイブフィルター */}
+      {/* アーカイブフィルター - ON/OFFボタン */}
       <div className="flex items-center space-x-1">
         <button 
-          onClick={() => handleArchiveFilterChange('unarchived')}
+          onClick={() => handleArchiveFilterChange(archiveFilter === 'unarchived' ? 'all' : 'unarchived')}
           className={`px-2 py-1 text-xs rounded-md flex items-center ${
             archiveFilter === 'unarchived' 
               ? 'bg-primary text-white' 
               : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600'
           }`}
-          aria-label="アーカイブ以外を表示"
+          aria-label={archiveFilter === 'unarchived' ? "アーカイブを含めて表示" : "アーカイブ以外を表示"}
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
           </svg>
           <span className="ml-1 hidden sm:inline">アーカイブ以外</span>
-        </button>
-        <button 
-          onClick={() => handleArchiveFilterChange('archived')}
-          className={`px-2 py-1 text-xs rounded-md flex items-center ${
-            archiveFilter === 'archived' 
-              ? 'bg-primary text-white' 
-              : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600'
-          }`}
-          aria-label="アーカイブのみ表示"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
-          </svg>
-          <span className="ml-1 hidden sm:inline">アーカイブのみ</span>
         </button>
       </div>
 

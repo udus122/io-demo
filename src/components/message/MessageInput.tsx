@@ -186,13 +186,20 @@ const MessageInput: React.FC<MessageInputProps> = ({
           }).join('\n');
           newCursorPos = selectionStart + formattedText.length;
         } else {
-          // 選択範囲がない場合は現在行の箇条書きをトグル
+          // 選択範囲がない場合は現在行のリスト形式を切り替え
           const bulletPattern = /^(\s*)- (.*)$/;
-          const match = currentLine.match(bulletPattern);
+          const numberPattern = /^(\s*)(\d+)\. (.*)$/;
+          const bulletMatch = currentLine.match(bulletPattern);
+          const numberMatch = currentLine.match(numberPattern);
           
-          if (match) {
+          // 先頭のスペースを検出
+          const leadingSpacePattern = /^(\s*)(.*)/;
+          const spaceMatch = currentLine.match(leadingSpacePattern);
+          const leadingSpace = spaceMatch ? spaceMatch[1] : '';
+          
+          if (bulletMatch) {
             // 箇条書きを削除
-            const newLine = `${match[1]}${match[2]}`;
+            const newLine = `${bulletMatch[1]}${bulletMatch[2]}`;
             const newValue = value.substring(0, currentLineStart) + newLine + value.substring(lineEnd);
             setMessage(newValue);
             // カーソル位置を調整（箇条書きマークの分だけ戻す）
@@ -200,12 +207,19 @@ const MessageInput: React.FC<MessageInputProps> = ({
             setTimeout(() => {
               textarea.setSelectionRange(newPosition, newPosition);
             }, 0);
+          } else if (numberMatch) {
+            // 番号付きリストを箇条書きに変換
+            const content = numberMatch[3];
+            formattedText = `${numberMatch[1]}- ${content}`;
+            const newValue = value.substring(0, currentLineStart) + formattedText + value.substring(lineEnd);
+            setMessage(newValue);
+            // カーソル位置を調整
+            const offset = 2 - (numberMatch[2].length + 2); // 「- 」の長さ - 「n. 」の長さ
+            const newPosition = selectionStart + offset;
+            setTimeout(() => {
+              textarea.setSelectionRange(newPosition, newPosition);
+            }, 0);
           } else {
-            // 先頭のスペースを検出
-            const leadingSpacePattern = /^(\s*)(.*)/;
-            const spaceMatch = currentLine.match(leadingSpacePattern);
-            const leadingSpace = spaceMatch ? spaceMatch[1] : '';
-            
             // 箇条書きを追加（先頭のスペースを維持）
             formattedText = `${leadingSpace}- `;
             const newValue = value.substring(0, currentLineStart) + formattedText + 
@@ -241,26 +255,40 @@ const MessageInput: React.FC<MessageInputProps> = ({
           }).join('\n');
           newCursorPos = selectionStart + formattedText.length;
         } else {
-          // 選択範囲がない場合は現在行の番号付きリストをトグル
+          // 選択範囲がない場合は現在行のリスト形式を切り替え
+          const bulletPattern = /^(\s*)- (.*)$/;
           const numberPattern = /^(\s*)(\d+)\. (.*)$/;
-          const match = currentLine.match(numberPattern);
+          const bulletMatch = currentLine.match(bulletPattern);
+          const numberMatch = currentLine.match(numberPattern);
           
-          if (match) {
+          // 先頭のスペースを検出
+          const leadingSpacePattern = /^(\s*)(.*)/;
+          const spaceMatch = currentLine.match(leadingSpacePattern);
+          const leadingSpace = spaceMatch ? spaceMatch[1] : '';
+          
+          if (numberMatch) {
             // 番号付きリストを削除
-            const newLine = `${match[1]}${match[3]}`;
+            const newLine = `${numberMatch[1]}${numberMatch[3]}`;
             const newValue = value.substring(0, currentLineStart) + newLine + value.substring(lineEnd);
             setMessage(newValue);
             // カーソル位置を調整（番号付きリストマークの分だけ戻す）
-            const newPosition = selectionStart - (match[2].length + 2);
+            const newPosition = selectionStart - (numberMatch[2].length + 2);
+            setTimeout(() => {
+              textarea.setSelectionRange(newPosition, newPosition);
+            }, 0);
+          } else if (bulletMatch) {
+            // 箇条書きを番号付きリストに変換
+            const content = bulletMatch[2];
+            formattedText = `${bulletMatch[1]}1. ${content}`;
+            const newValue = value.substring(0, currentLineStart) + formattedText + value.substring(lineEnd);
+            setMessage(newValue);
+            // カーソル位置を調整
+            const offset = 3 - 2; // 「1. 」の長さ - 「- 」の長さ
+            const newPosition = selectionStart + offset;
             setTimeout(() => {
               textarea.setSelectionRange(newPosition, newPosition);
             }, 0);
           } else {
-            // 先頭のスペースを検出
-            const leadingSpacePattern = /^(\s*)(.*)/;
-            const spaceMatch = currentLine.match(leadingSpacePattern);
-            const leadingSpace = spaceMatch ? spaceMatch[1] : '';
-            
             // 番号付きリストを追加（先頭のスペースを維持）
             formattedText = `${leadingSpace}1. `;
             const newValue = value.substring(0, currentLineStart) + formattedText + 

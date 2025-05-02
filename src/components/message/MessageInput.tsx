@@ -263,8 +263,18 @@ const MessageInput: React.FC<MessageInputProps> = ({
   };
 
   // フォーマットボタンをクリックしたときの処理
-  const handleFormatClick = (formatType: FormatType) => {
+  const handleFormatClick = (formatType: FormatType, e: MouseEvent<HTMLButtonElement>) => {
+    // デフォルトのボタンクリック動作を防止（フォーカスが外れるのを防ぐ）
+    e.preventDefault();
+    
     applyFormat(formatType);
+    
+    // フォーマット適用後、テキストエリアにフォーカスを戻す
+    setTimeout(() => {
+      if (textareaRef.current) {
+        textareaRef.current.focus();
+      }
+    }, 0);
   };
   
   // テキストエリアの高さを内容に合わせて自動調整する関数
@@ -407,7 +417,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
       {/* フォーマットボタンツールバー */}
       <div className="flex flex-wrap gap-1 mb-2 overflow-x-auto pb-1">
         <button
-          onClick={() => handleFormatClick('bold')}
+          onClick={(e) => handleFormatClick('bold', e)}
           className="p-1.5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
           title="太字"
           aria-label="太字"
@@ -415,7 +425,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
           <BoldIcon />
         </button>
         <button
-          onClick={() => handleFormatClick('italic')}
+          onClick={(e) => handleFormatClick('italic', e)}
           className="p-1.5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
           title="斜体"
           aria-label="斜体"
@@ -423,7 +433,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
           <ItalicIcon />
         </button>
         <button
-          onClick={() => handleFormatClick('underline')}
+          onClick={(e) => handleFormatClick('underline', e)}
           className="p-1.5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
           title="下線"
           aria-label="下線"
@@ -431,7 +441,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
           <UnderlineIcon />
         </button>
         <button
-          onClick={() => handleFormatClick('strikethrough')}
+          onClick={(e) => handleFormatClick('strikethrough', e)}
           className="p-1.5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
           title="取り消し線"
           aria-label="取り消し線"
@@ -440,7 +450,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
         </button>
         <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 self-center mx-1"></div>
         <button
-          onClick={() => handleFormatClick('bulletList')}
+          onClick={(e) => handleFormatClick('bulletList', e)}
           className="p-1.5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
           title="箇条書き"
           aria-label="箇条書き"
@@ -448,7 +458,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
           <ListBulletIcon />
         </button>
         <button
-          onClick={() => handleFormatClick('numberList')}
+          onClick={(e) => handleFormatClick('numberList', e)}
           className="p-1.5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
           title="番号付きリスト"
           aria-label="番号付きリスト"
@@ -457,7 +467,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
         </button>
         <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 self-center mx-1"></div>
         <button
-          onClick={() => handleFormatClick('outdent')}
+          onClick={(e) => handleFormatClick('outdent', e)}
           className="p-1.5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
           title="アウトデント"
           aria-label="アウトデント"
@@ -465,7 +475,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
           <OutdentIcon />
         </button>
         <button
-          onClick={() => handleFormatClick('indent')}
+          onClick={(e) => handleFormatClick('indent', e)}
           className="p-1.5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
           title="インデント"
           aria-label="インデント"

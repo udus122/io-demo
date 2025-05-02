@@ -165,6 +165,12 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
     } else if (filter === 'tasks') {
       // タスクのみをフィルタリング
       filteredMessages = filteredMessages.filter(msg => msg.isTask);
+    } else if (filter === 'completed-tasks') {
+      // 完了タスクのみをフィルタリング
+      filteredMessages = filteredMessages.filter(msg => msg.isTask && msg.isCompleted);
+    } else if (filter === 'uncompleted-tasks') {
+      // 未完了タスクのみをフィルタリング
+      filteredMessages = filteredMessages.filter(msg => msg.isTask && !msg.isCompleted);
     }
 
     // タグでフィルタリング

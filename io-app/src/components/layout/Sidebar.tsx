@@ -49,6 +49,22 @@ const Sidebar: React.FC<SidebarProps> = ({ tags, onTagSelect, onFilterChange }) 
           >
             タスクのみ
           </button>
+          <button 
+            onClick={() => onFilterChange('completed-tasks')}
+            className={`w-full text-left px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 ${
+              activeFilter === 'completed-tasks' ? 'bg-gray-100 dark:bg-gray-700 font-medium' : ''
+            }`}
+          >
+            完了タスク
+          </button>
+          <button 
+            onClick={() => onFilterChange('uncompleted-tasks')}
+            className={`w-full text-left px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 ${
+              activeFilter === 'uncompleted-tasks' ? 'bg-gray-100 dark:bg-gray-700 font-medium' : ''
+            }`}
+          >
+            未完了タスク
+          </button>
         </div>
       </div>
       

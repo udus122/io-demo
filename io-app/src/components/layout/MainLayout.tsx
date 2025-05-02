@@ -18,8 +18,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, sidebar }) => {
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
         border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800
       `}>
-        {/* サイドバーヘッダー */}
-        <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
+        {/* サイドバーヘッダー - モバイルでのみ表示 */}
+        <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 md:hidden">
           <h1 className="text-xl font-bold">IO</h1>
           <button 
             onClick={() => setIsSidebarOpen(false)}

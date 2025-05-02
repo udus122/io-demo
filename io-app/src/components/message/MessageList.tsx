@@ -22,20 +22,27 @@ const MessageList: React.FC<MessageListProps> = ({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [highlightedMessageId, setHighlightedMessageId] = useState<string | null>(null);
 
-  // 新しいメッセージが追加されたときにスクロールする
+  // 新しいメッセージが追加されたときとコンポーネントマウント時にスクロールする
   useEffect(() => {
-    if (lastAddedMessageId && messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
-      setHighlightedMessageId(lastAddedMessageId);
-      
-      // ハイライト効果を3秒後に消す
-      const timer = setTimeout(() => {
-        setHighlightedMessageId(null);
-      }, 3000);
-      
-      return () => clearTimeout(timer);
+    if (messagesEndRef.current) {
+      // 新しいメッセージが追加された場合
+      if (lastAddedMessageId) {
+        messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+        setHighlightedMessageId(lastAddedMessageId);
+        
+        // ハイライト効果を3秒後に消す
+        const timer = setTimeout(() => {
+          setHighlightedMessageId(null);
+        }, 3000);
+        
+        return () => clearTimeout(timer);
+      } 
+      // コンポーネントマウント時（アプリ起動時）
+      else if (rootMessages.length > 0) {
+        messagesEndRef.current.scrollIntoView({ behavior: 'auto' });
+      }
     }
-  }, [lastAddedMessageId]);
+  }, [lastAddedMessageId, rootMessages.length]);
 
   return (
     <div className="flex-1 overflow-y-auto">

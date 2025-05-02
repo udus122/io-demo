@@ -24,18 +24,25 @@ const ThreadView: React.FC<ThreadViewProps> = ({
   const repliesEndRef = useRef<HTMLDivElement>(null);
   const [highlightedMessageId, setHighlightedMessageId] = useState<string | null>(null);
 
-  // 新しい返信が追加されたときにスクロールする
+  // 新しい返信が追加されたときとコンポーネントマウント時にスクロールする
   useEffect(() => {
-    if (lastAddedMessageId && replies.some(reply => reply.id === lastAddedMessageId) && repliesEndRef.current) {
-      repliesEndRef.current.scrollIntoView({ behavior: 'smooth' });
-      setHighlightedMessageId(lastAddedMessageId);
-      
-      // ハイライト効果を3秒後に消す
-      const timer = setTimeout(() => {
-        setHighlightedMessageId(null);
-      }, 3000);
-      
-      return () => clearTimeout(timer);
+    if (repliesEndRef.current) {
+      // 新しい返信が追加された場合
+      if (lastAddedMessageId && replies.some(reply => reply.id === lastAddedMessageId)) {
+        repliesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+        setHighlightedMessageId(lastAddedMessageId);
+        
+        // ハイライト効果を3秒後に消す
+        const timer = setTimeout(() => {
+          setHighlightedMessageId(null);
+        }, 3000);
+        
+        return () => clearTimeout(timer);
+      }
+      // コンポーネントマウント時（スレッド表示時）
+      else if (replies.length > 0) {
+        repliesEndRef.current.scrollIntoView({ behavior: 'auto' });
+      }
     }
   }, [lastAddedMessageId, replies]);
 

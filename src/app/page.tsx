@@ -7,6 +7,7 @@ import MessageList from '@/components/message/MessageList';
 import MessageInput from '@/components/message/MessageInput';
 import ThreadView from '@/components/thread/ThreadView';
 import SearchBar from '@/components/search/SearchBar';
+import FilterBar from '@/components/search/FilterBar';
 import SearchOptions from '@/components/search/SearchOptions';
 import SearchResults from '@/components/search/SearchResults';
 import { MessageProvider, useMessages } from '@/contexts/MessageContext';
@@ -125,6 +126,9 @@ const MainContent = () => {
       <div className="flex flex-col h-full">
         {/* 検索バー */}
         <SearchBar onToggleOptions={toggleSearchOptions} />
+        
+        {/* フィルターバー - 常に表示 */}
+        <FilterBar />
         
         {/* 検索オプション */}
         <SearchOptions isVisible={showSearchOptions} />

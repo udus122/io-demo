@@ -81,3 +81,44 @@ body {
     border-left-color: #4b5563;
   }
 }
+
+/* スクロールバーのカスタマイズ */
+/* WebKitベースのブラウザ（Chrome、Safari、新しいEdgeなど）用 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(156, 163, 175, 0.5);
+}
+
+/* Firefoxなどの他のブラウザ用 */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(156, 163, 175, 0.3) transparent;
+}
+
+/* ダークモード用のスクロールバー */
+@media (prefers-color-scheme: dark) {
+  ::-webkit-scrollbar-thumb {
+    background-color: rgba(156, 163, 175, 0.2);
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(156, 163, 175, 0.4);
+  }
+  
+  * {
+    scrollbar-color: rgba(156, 163, 175, 0.2) transparent;
+  }
+}

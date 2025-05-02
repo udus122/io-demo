@@ -37,25 +37,23 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
   const [messages, setMessages] = useState<Message[]>([]);
   const [lastAddedMessageId, setLastAddedMessageId] = useState<string | null>(null);
 
-  // LocalStorageからメッセージを読み込む
+  // LocalStorageからメッセージを読み込む（初回のみ）
   useEffect(() => {
     const storedMessages = localStorage.getItem('io-messages');
     if (storedMessages) {
       try {
         const parsedMessages = JSON.parse(storedMessages);
-        // 日付文字列をDateオブジェクトに変換し、必要に応じてchannelIdを追加
+        // 日付文字列をDateオブジェクトに変換
         const messagesWithDates = parsedMessages.map((msg: any) => ({
           ...msg,
-          createdAt: new Date(msg.createdAt),
-          // channelIdがない場合はアクティブなチャンネルIDを設定
-          channelId: msg.channelId || activeChannelId
+          createdAt: new Date(msg.createdAt)
         }));
         setMessages(messagesWithDates);
       } catch (error) {
         console.error('Failed to parse stored messages:', error);
       }
     }
-  }, [activeChannelId]);
+  }, []); // 依存配列を空にして初回のみ実行
 
   // メッセージが変更されたらLocalStorageに保存
   useEffect(() => {
@@ -184,7 +182,11 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
       // 未完了タスクのみをフィルタリング
       filteredMessages = filteredMessages.filter(msg => msg.isTask && !msg.isCompleted);
     } else if (taskFilter === 'all') {
-      // タスクフィルターなし
+      // タスクフィルターなし - デフォルトでは完了済みタスクを非表示にする
+      if (archiveFilter === 'unarchived') {
+        // アーカイブされていないメッセージの場合、完了済みタスクを非表示にする
+        filteredMessages = filteredMessages.filter(msg => !msg.isTask || !msg.isCompleted);
+      }
     }
 
     // タグでフィルタリング

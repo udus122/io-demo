@@ -107,7 +107,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
       </div>
       
       {searchResults.length > 0 ? (
-        searchResults.map(message => (
+        searchResults.map((message: MessageWithThreadInfo) => (
           <SearchResultItem
             key={message.id}
             message={message}

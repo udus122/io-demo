@@ -1,11 +1,11 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { Message } from '@/types';
+import { Message, MessageWithThreadInfo } from '@/types';
 import { useMessages } from './MessageContext';
 import { searchMessages, SearchOptions } from '../utils/search';
 
 interface SearchContextType {
   searchTerm: string;
-  searchResults: Message[];
+  searchResults: MessageWithThreadInfo[];
   searchOptions: SearchOptions;
   isSearchActive: boolean;
   setSearchTerm: (term: string) => void;
@@ -31,7 +31,7 @@ interface SearchProviderProps {
 export const SearchProvider: React.FC<SearchProviderProps> = ({ children }) => {
   const { messages } = useMessages();
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [searchResults, setSearchResults] = useState<Message[]>([]);
+  const [searchResults, setSearchResults] = useState<MessageWithThreadInfo[]>([]);
   const [isSearchActive, setIsSearchActive] = useState<boolean>(false);
   const [searchOptions, setSearchOptionsState] = useState<SearchOptions>({
     inContent: true,

@@ -125,10 +125,10 @@ const MessageInput: React.FC<MessageInputProps> = ({
           : selectionEnd + 4;
         break;
       case 'underline':
-        formattedText = `__${selectedText}__`;
+        formattedText = `<u>${selectedText}</u>`;
         newCursorPos = selectionStart === selectionEnd 
-          ? selectionStart + 2 
-          : selectionEnd + 4;
+          ? selectionStart + 3 
+          : selectionEnd + 7;
         break;
       case 'bulletList':
         // 選択範囲がある場合は各行に箇条書きを適用

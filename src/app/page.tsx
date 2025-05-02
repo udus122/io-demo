@@ -133,38 +133,14 @@ const MainContent = () => {
         {/* 検索オプション */}
         <SearchOptions isVisible={showSearchOptions} />
         
-        {/* スレッドセクション - アクティブなスレッドがある場合のみ表示 */}
+        {/* モバイル表示時のスレッドヘッダー - アクティブなスレッドがある場合のみ表示 */}
         {activeThreadId && (
-          <div className="flex flex-col flex-1 overflow-hidden">
-            {/* スレッドヘッダー */}
+          <div className="md:hidden">
             <ThreadHeader onClose={handleCloseThread} />
-            
-            {/* スレッド内容 - スクロール可能エリア */}
-            <div className="flex-1 overflow-y-auto md:px-4">
-              <ThreadView
-                parentMessage={activeThreadParent}
-                replies={activeThreadReplies}
-                onSendReply={handleSendReply}
-                onTagClick={handleTagClick}
-                onArchiveToggle={toggleArchive}
-                onTaskToggle={handleTaskToggle}
-                onTaskStatusToggle={handleTaskStatusToggle}
-                onClose={handleCloseThread}
-              />
-            </div>
-            
-            {/* スレッド用メッセージ入力欄 - 画面下部に固定 */}
-            <div className="mt-auto border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-              <MessageInput 
-                onSendMessage={handleSendReply} 
-                replyToId={activeThreadId}
-                placeholder="返信を入力..."
-              />
-            </div>
           </div>
         )}
         
-        <div className={`flex flex-col md:flex-row flex-1 overflow-hidden ${activeThreadId ? 'hidden md:flex' : ''}`}>
+        <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
           {/* 検索結果またはメッセージリスト */}
           {isSearchActive ? (
             <SearchResults
@@ -204,7 +180,38 @@ const MainContent = () => {
                 </div>
               </div>
 
-              {/* スレッドエリアはフィルターバー直下に移動したため、ここでは表示しない */}
+              {/* スレッドエリアとスレッド用入力欄のコンテナ - デスクトップでは右側に表示 */}
+              {activeThreadId && (
+                <div className="w-full md:w-1/2 flex flex-col h-full">
+                  {/* デスクトップ表示時のスレッドヘッダー */}
+                  <div className="hidden md:block">
+                    <ThreadHeader onClose={handleCloseThread} />
+                  </div>
+                  
+                  {/* スレッド内容 - スクロール可能エリア */}
+                  <div className="flex-1 overflow-y-auto md:px-4">
+                    <ThreadView
+                      parentMessage={activeThreadParent}
+                      replies={activeThreadReplies}
+                      onSendReply={handleSendReply}
+                      onTagClick={handleTagClick}
+                      onArchiveToggle={toggleArchive}
+                      onTaskToggle={handleTaskToggle}
+                      onTaskStatusToggle={handleTaskStatusToggle}
+                      onClose={handleCloseThread}
+                    />
+                  </div>
+                  
+                  {/* スレッド用メッセージ入力欄 - 画面下部に固定 */}
+                  <div className="mt-auto border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+                    <MessageInput 
+                      onSendMessage={handleSendReply} 
+                      replyToId={activeThreadId}
+                      placeholder="返信を入力..."
+                    />
+                  </div>
+                </div>
+              )}
             </>
           )}
         </div>

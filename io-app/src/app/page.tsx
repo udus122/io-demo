@@ -6,10 +6,16 @@ import Sidebar from '@/components/layout/Sidebar';
 import MessageList from '@/components/message/MessageList';
 import MessageInput from '@/components/message/MessageInput';
 import ThreadView from '@/components/thread/ThreadView';
+import SearchBar from '@/components/search/SearchBar';
+import SearchOptions from '@/components/search/SearchOptions';
+import SearchResults from '@/components/search/SearchResults';
 import { MessageProvider, useMessages } from '@/contexts/MessageContext';
 import { UIProvider, useUI } from '@/contexts/UIContext';
+import { SearchProvider, useSearch } from '@/contexts/SearchContext';
 
 const MainContent = () => {
+  const [showSearchOptions, setShowSearchOptions] = useState(false);
+  const { isSearchActive } = useSearch();
   const { 
     messages, 
     addMessage, 
@@ -75,6 +81,11 @@ const MainContent = () => {
     hasReplies: messages.some(m => m.parentId === msg.id)
   }));
 
+  // 検索オプションの表示/非表示を切り替える
+  const toggleSearchOptions = () => {
+    setShowSearchOptions(prev => !prev);
+  };
+
   return (
     <MainLayout
       sidebar={
@@ -85,31 +96,47 @@ const MainContent = () => {
         />
       }
     >
-      <div className="flex h-full">
-        {/* メインメッセージエリア */}
-        <div className={`flex flex-col ${activeThreadId ? 'w-1/2' : 'w-full'}`}>
-          <MessageList
-            messages={messagesWithThreadInfo}
-            onReply={handleOpenThread}
-            onTagClick={handleTagClick}
-            onArchiveToggle={toggleArchive}
-          />
-          <MessageInput onSendMessage={handleSendMessage} />
-        </div>
-
-        {/* スレッドエリア */}
-        {activeThreadId && (
-          <div className="w-1/2">
-            <ThreadView
-              parentMessage={activeThreadParent}
-              replies={activeThreadReplies}
-              onSendReply={handleSendReply}
+      <div className="flex flex-col h-full">
+        {/* 検索バー */}
+        <SearchBar onToggleOptions={toggleSearchOptions} />
+        
+        {/* 検索オプション */}
+        <SearchOptions isVisible={showSearchOptions} />
+        
+        <div className="flex flex-1 overflow-hidden">
+          {/* 検索結果またはメッセージリスト */}
+          {isSearchActive ? (
+            <SearchResults
+              onReply={handleOpenThread}
               onTagClick={handleTagClick}
               onArchiveToggle={toggleArchive}
-              onClose={handleCloseThread}
             />
-          </div>
-        )}
+          ) : (
+            <div className={`flex flex-col ${activeThreadId ? 'w-1/2' : 'w-full'}`}>
+              <MessageList
+                messages={messagesWithThreadInfo}
+                onReply={handleOpenThread}
+                onTagClick={handleTagClick}
+                onArchiveToggle={toggleArchive}
+              />
+              <MessageInput onSendMessage={handleSendMessage} />
+            </div>
+          )}
+
+          {/* スレッドエリア - 検索中は非表示 */}
+          {activeThreadId && !isSearchActive && (
+            <div className="w-1/2">
+              <ThreadView
+                parentMessage={activeThreadParent}
+                replies={activeThreadReplies}
+                onSendReply={handleSendReply}
+                onTagClick={handleTagClick}
+                onArchiveToggle={toggleArchive}
+                onClose={handleCloseThread}
+              />
+            </div>
+          )}
+        </div>
       </div>
     </MainLayout>
   );
@@ -119,7 +146,9 @@ export default function Home() {
   return (
     <MessageProvider>
       <UIProvider>
-        <MainContent />
+        <SearchProvider>
+          <MainContent />
+        </SearchProvider>
       </UIProvider>
     </MessageProvider>
   );

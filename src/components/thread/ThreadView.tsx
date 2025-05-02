@@ -14,6 +14,40 @@ interface ThreadViewProps {
   onClose: () => void;
 }
 
+// スレッドヘッダーコンポーネント
+export const ThreadHeader: React.FC<{
+  onClose: () => void;
+}> = ({ onClose }) => {
+  return (
+    <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-white dark:bg-gray-800">
+      <div className="flex items-center">
+        {/* モバイル用の戻るボタン */}
+        <button
+          onClick={onClose}
+          className="md:hidden mr-2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 flex items-center"
+          aria-label="戻る"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          戻る
+        </button>
+        <h2 className="font-semibold">スレッド</h2>
+      </div>
+      {/* デスクトップ用の閉じるボタン */}
+      <button
+        onClick={onClose}
+        className="hidden md:block text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+        aria-label="閉じる"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+  );
+};
+
 const ThreadView: React.FC<ThreadViewProps> = ({
   parentMessage,
   replies,
@@ -56,34 +90,6 @@ const ThreadView: React.FC<ThreadViewProps> = ({
 
   return (
     <div className="flex flex-col h-full border-l border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-      {/* ヘッダー */}
-      <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-        <div className="flex items-center">
-          {/* モバイル用の戻るボタン */}
-          <button
-            onClick={onClose}
-            className="md:hidden mr-2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 flex items-center"
-            aria-label="戻る"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            戻る
-          </button>
-          <h2 className="font-semibold">スレッド</h2>
-        </div>
-        {/* デスクトップ用の閉じるボタン */}
-        <button
-          onClick={onClose}
-          className="hidden md:block text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
-          aria-label="閉じる"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
-
       {/* 親メッセージ */}
       <div className="border-b border-gray-200 dark:border-gray-700">
             <MessageItem
@@ -107,7 +113,7 @@ const ThreadView: React.FC<ThreadViewProps> = ({
       {/* 返信リスト */}
       <div className="flex-1 overflow-y-auto pb-4">
         {replies.length > 0 ? (
-          replies.map(reply => (
+          [...replies].reverse().map(reply => (
             <div 
               key={reply.id}
               className={`transition-colors duration-1000 ${highlightedMessageId === reply.id ? 'bg-primary/10' : ''}`}

@@ -1,4 +1,4 @@
-import React, { useState, KeyboardEvent, useRef, useEffect, MouseEvent } from 'react';
+import React, { useState, KeyboardEvent, useRef, useEffect, MouseEvent, useCallback } from 'react';
 
 interface MessageInputProps {
   onSendMessage: (content: string) => void;
@@ -88,6 +88,41 @@ const MessageInput: React.FC<MessageInputProps> = ({
 }) => {
   const [message, setMessage] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  
+  // undo/redo用の履歴管理
+  const [history, setHistory] = useState<string[]>([]);
+  const [historyIndex, setHistoryIndex] = useState(-1);
+  const [isUndoRedoing, setIsUndoRedoing] = useState(false);
+  
+  // メッセージが変更されたときに履歴を更新
+  useEffect(() => {
+    if (!isUndoRedoing) {
+      // 通常の編集操作の場合のみ履歴を更新
+      const newHistory = [...history.slice(0, historyIndex + 1), message];
+      setHistory(newHistory);
+      setHistoryIndex(newHistory.length - 1);
+    }
+    // isUndoRedoingをリセット
+    setIsUndoRedoing(false);
+  }, [message]);
+  
+  // undo操作
+  const handleUndo = useCallback(() => {
+    if (historyIndex > 0) {
+      setIsUndoRedoing(true);
+      setHistoryIndex(historyIndex - 1);
+      setMessage(history[historyIndex - 1]);
+    }
+  }, [history, historyIndex]);
+  
+  // redo操作
+  const handleRedo = useCallback(() => {
+    if (historyIndex < history.length - 1) {
+      setIsUndoRedoing(true);
+      setHistoryIndex(historyIndex + 1);
+      setMessage(history[historyIndex + 1]);
+    }
+  }, [history, historyIndex]);
 
   // テキストにフォーマットを適用する関数
   const applyFormat = (formatType: FormatType) => {
@@ -307,6 +342,20 @@ const MessageInput: React.FC<MessageInputProps> = ({
     if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
       e.preventDefault();
       handleSubmit();
+      return;
+    }
+    
+    // ⌘+Z / Ctrl+Z でundo
+    if (e.key === 'z' && (e.metaKey || e.ctrlKey) && !e.shiftKey) {
+      e.preventDefault();
+      handleUndo();
+      return;
+    }
+    
+    // ⌘+Shift+Z / Ctrl+Shift+Z でredo
+    if (e.key === 'z' && (e.metaKey || e.ctrlKey) && e.shiftKey) {
+      e.preventDefault();
+      handleRedo();
       return;
     }
 

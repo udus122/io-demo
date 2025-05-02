@@ -36,8 +36,28 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
   const { activeChannelId } = useUI();
   const [messages, setMessages] = useState<Message[]>([]);
   const [lastAddedMessageId, setLastAddedMessageId] = useState<string | null>(null);
+  
+  // クライアントサイドでのみローカルストレージから状態を読み込む
+  useEffect(() => {
+    // ローカルストレージから状態を読み込むヘルパー関数
+    const getStoredState = <T,>(key: string, defaultValue: T): T => {
+      const storedValue = localStorage.getItem(key);
+      if (storedValue) {
+        try {
+          return JSON.parse(storedValue);
+        } catch (error) {
+          console.error(`Failed to parse stored value for ${key}:`, error);
+          return defaultValue;
+        }
+      }
+      return defaultValue;
+    };
+    
+    // 最後に追加されたメッセージIDを読み込む
+    setLastAddedMessageId(getStoredState('io-lastAddedMessageId', null));
+  }, []);
 
-  // LocalStorageからメッセージを読み込む（初回のみ）
+  // クライアントサイドでのみLocalStorageからメッセージを読み込む
   useEffect(() => {
     const storedMessages = localStorage.getItem('io-messages');
     if (storedMessages) {
@@ -59,6 +79,11 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
   useEffect(() => {
     localStorage.setItem('io-messages', JSON.stringify(messages));
   }, [messages]);
+  
+  // 最後に追加されたメッセージIDが変更されたらLocalStorageに保存
+  useEffect(() => {
+    localStorage.setItem('io-lastAddedMessageId', JSON.stringify(lastAddedMessageId));
+  }, [lastAddedMessageId]);
 
   // 新しいメッセージを追加
   const addMessage = (content: string, parentId: string | null = null) => {

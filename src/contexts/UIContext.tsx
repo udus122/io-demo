@@ -35,13 +35,39 @@ interface UIProviderProps {
 }
 
 export const UIProvider: React.FC<UIProviderProps> = ({ children }) => {
-  const [archiveFilter, setArchiveFilter] = useState<string>('unarchived'); // デフォルトはアーカイブ以外を表示
+  // デフォルト値で初期化（サーバーサイドレンダリング時にも同じ値を使用）
+  const [archiveFilter, setArchiveFilter] = useState<string>('unarchived');
   const [taskFilter, setTaskFilter] = useState<string>('all');
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
   const [channels, setChannels] = useState<Channel[]>([]);
   const [activeChannelId, setActiveChannelId] = useState<string>('');
   const [isSidebarVisible, setIsSidebarVisible] = useState<boolean>(true);
+  
+  // クライアントサイドでのみローカルストレージから状態を読み込む
+  useEffect(() => {
+    // ローカルストレージから状態を読み込むヘルパー関数
+    const getStoredState = <T,>(key: string, defaultValue: T): T => {
+      const storedValue = localStorage.getItem(key);
+      if (storedValue) {
+        try {
+          return JSON.parse(storedValue);
+        } catch (error) {
+          console.error(`Failed to parse stored value for ${key}:`, error);
+          return defaultValue;
+        }
+      }
+      return defaultValue;
+    };
+    
+    // ローカルストレージから各状態を読み込む
+    setArchiveFilter(getStoredState('io-archiveFilter', 'unarchived'));
+    setTaskFilter(getStoredState('io-taskFilter', 'all'));
+    setSelectedTag(getStoredState('io-selectedTag', null));
+    setActiveThreadId(getStoredState('io-activeThreadId', null));
+    setActiveChannelId(getStoredState('io-activeChannelId', ''));
+    setIsSidebarVisible(getStoredState('io-isSidebarVisible', true));
+  }, []);
 
   // LocalStorageからチャンネルを読み込む
   useEffect(() => {
@@ -112,6 +138,31 @@ export const UIProvider: React.FC<UIProviderProps> = ({ children }) => {
     setChannels(prevChannels => prevChannels.filter(channel => channel.id !== channelId));
     return true;
   };
+
+  // 状態が変更されたらローカルストレージに保存する
+  useEffect(() => {
+    localStorage.setItem('io-archiveFilter', JSON.stringify(archiveFilter));
+  }, [archiveFilter]);
+
+  useEffect(() => {
+    localStorage.setItem('io-taskFilter', JSON.stringify(taskFilter));
+  }, [taskFilter]);
+
+  useEffect(() => {
+    localStorage.setItem('io-selectedTag', JSON.stringify(selectedTag));
+  }, [selectedTag]);
+
+  useEffect(() => {
+    localStorage.setItem('io-activeThreadId', JSON.stringify(activeThreadId));
+  }, [activeThreadId]);
+
+  useEffect(() => {
+    localStorage.setItem('io-activeChannelId', JSON.stringify(activeChannelId));
+  }, [activeChannelId]);
+
+  useEffect(() => {
+    localStorage.setItem('io-isSidebarVisible', JSON.stringify(isSidebarVisible));
+  }, [isSidebarVisible]);
 
   // サイドバーの表示/非表示を切り替える
   const toggleSidebar = () => {

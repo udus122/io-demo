@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { Message, MessageWithThreadInfo } from '@/types';
 import { useMessages } from './MessageContext';
 import { searchMessages, SearchOptions } from '../utils/search';
@@ -30,6 +30,8 @@ interface SearchProviderProps {
 
 export const SearchProvider: React.FC<SearchProviderProps> = ({ children }) => {
   const { messages } = useMessages();
+  
+  // デフォルト値で初期化（サーバーサイドレンダリング時にも同じ値を使用）
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [searchResults, setSearchResults] = useState<MessageWithThreadInfo[]>([]);
   const [isSearchActive, setIsSearchActive] = useState<boolean>(false);
@@ -41,6 +43,48 @@ export const SearchProvider: React.FC<SearchProviderProps> = ({ children }) => {
     dateTo: null,
     tags: [],
   });
+  
+  // クライアントサイドでのみローカルストレージから状態を読み込む
+  useEffect(() => {
+    // ローカルストレージから状態を読み込むヘルパー関数
+    const getStoredState = <T,>(key: string, defaultValue: T): T => {
+      const storedValue = localStorage.getItem(key);
+      if (storedValue) {
+        try {
+          return JSON.parse(storedValue);
+        } catch (error) {
+          console.error(`Failed to parse stored value for ${key}:`, error);
+          return defaultValue;
+        }
+      }
+      return defaultValue;
+    };
+    
+    // ローカルストレージから各状態を読み込む
+    setSearchTerm(getStoredState('io-searchTerm', ''));
+    setIsSearchActive(getStoredState('io-isSearchActive', false));
+    setSearchOptionsState(getStoredState('io-searchOptions', {
+      inContent: true,
+      inTags: true,
+      caseSensitive: false,
+      dateFrom: null,
+      dateTo: null,
+      tags: [],
+    }));
+  }, []);
+  
+  // 状態が変更されたらローカルストレージに保存
+  useEffect(() => {
+    localStorage.setItem('io-searchTerm', JSON.stringify(searchTerm));
+  }, [searchTerm]);
+  
+  useEffect(() => {
+    localStorage.setItem('io-isSearchActive', JSON.stringify(isSearchActive));
+  }, [isSearchActive]);
+  
+  useEffect(() => {
+    localStorage.setItem('io-searchOptions', JSON.stringify(searchOptions));
+  }, [searchOptions]);
 
   const setSearchOptions = useCallback((options: Partial<SearchOptions>) => {
     setSearchOptionsState((prev: SearchOptions) => ({ ...prev, ...options }));
@@ -77,6 +121,13 @@ export const SearchProvider: React.FC<SearchProviderProps> = ({ children }) => {
       dateTo: null,
       tags: [],
     });
+    
+    // ローカルストレージからも削除
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('io-searchTerm');
+      localStorage.removeItem('io-isSearchActive');
+      localStorage.removeItem('io-searchOptions');
+    }
   }, []);
 
   return (

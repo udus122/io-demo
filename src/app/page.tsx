@@ -134,7 +134,7 @@ const MainContent = () => {
             <>
               {/* メッセージリストとメッセージ入力欄のコンテナ */}
               <div className={`
-                flex flex-col
+                flex flex-col h-full
                 ${activeThreadId ? 'w-full md:w-1/2' : 'w-full'}
                 transition-all duration-300
               `}>
@@ -155,14 +155,14 @@ const MainContent = () => {
                 </div>
 
                 {/* メッセージ入力欄 - スレッド非表示時または常にデスクトップで表示、モバイルではsticky */}
-                <div className={`${activeThreadId ? 'hidden md:block' : ''} sticky bottom-0 z-10`}>
+                <div className={`${activeThreadId ? 'hidden md:block' : ''} mt-auto sticky bottom-0 z-10`}>
                   <MessageInput onSendMessage={handleSendMessage} />
                 </div>
               </div>
 
               {/* スレッドエリアとスレッド用入力欄のコンテナ */}
               {activeThreadId && (
-                <div className="w-full md:w-1/2 flex flex-col">
+                <div className="w-full md:w-1/2 flex flex-col h-full">
                   <div className="flex-1 overflow-auto">
                     <ThreadView
                       parentMessage={activeThreadParent}
@@ -177,7 +177,7 @@ const MainContent = () => {
                   </div>
                   
                   {/* スレッド用メッセージ入力欄 - モバイルとデスクトップの両方で表示、モバイルではsticky */}
-                  <div className="md:block sticky bottom-0 z-10">
+                  <div className="md:block mt-auto sticky bottom-0 z-10">
                     <MessageInput 
                       onSendMessage={handleSendReply} 
                       replyToId={activeThreadId}

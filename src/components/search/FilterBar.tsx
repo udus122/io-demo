@@ -80,32 +80,32 @@ const FilterBar: React.FC = () => {
           <span className="ml-1 hidden sm:inline">タスクのみ</span>
         </button>
         <button 
-          onClick={() => handleTaskFilterChange('completed-tasks')}
-          className={`px-2 py-1 text-xs rounded-md flex items-center ${
-            taskFilter === 'completed-tasks' 
-              ? 'bg-primary text-white' 
-              : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600'
-          }`}
-          aria-label="完了タスクを表示"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-          </svg>
-          <span className="ml-1 hidden sm:inline">完了タスク</span>
-        </button>
-        <button 
           onClick={() => handleTaskFilterChange('uncompleted-tasks')}
           className={`px-2 py-1 text-xs rounded-md flex items-center ${
             taskFilter === 'uncompleted-tasks' 
               ? 'bg-primary text-white' 
               : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600'
           }`}
-          aria-label="未完了タスクを表示"
+          aria-label="未完了たすくのみを表示"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          <span className="ml-1 hidden sm:inline">未完了タスク</span>
+          <span className="ml-1 hidden sm:inline">未完了タスクのみを表示</span>
+        </button>
+        <button 
+          onClick={() => handleTaskFilterChange('completed-tasks')}
+          className={`px-2 py-1 text-xs rounded-md flex items-center ${
+            taskFilter === 'completed-tasks' 
+              ? 'bg-primary text-white' 
+              : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600'
+          }`}
+          aria-label="完了済タスクのみを表示"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+          <span className="ml-1 hidden sm:inline">完了済タスクのみを表示</span>
         </button>
       </div>
     </div>

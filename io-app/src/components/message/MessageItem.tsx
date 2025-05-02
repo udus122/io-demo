@@ -9,10 +9,13 @@ interface MessageItemProps {
   createdAt: Date;
   tags: string[];
   isArchived: boolean;
+  isTask?: boolean;
+  isCompleted?: boolean;
   hasThread: boolean;
   onReply: (id: string) => void;
   onTagClick: (tag: string) => void;
   onArchiveToggle: (id: string) => void;
+  onTaskToggle?: (id: string) => void;
 }
 
 const MessageItem: React.FC<MessageItemProps> = ({
@@ -21,10 +24,13 @@ const MessageItem: React.FC<MessageItemProps> = ({
   createdAt,
   tags,
   isArchived,
+  isTask = false,
+  isCompleted = false,
   hasThread,
   onReply,
   onTagClick,
   onArchiveToggle,
+  onTaskToggle,
 }) => {
   return (
     <div className={`p-3 md:p-4 border-b border-gray-200 dark:border-gray-700 ${isArchived ? 'bg-gray-50 dark:bg-gray-800/50' : 'bg-white dark:bg-gray-800'}`}>
@@ -50,8 +56,28 @@ const MessageItem: React.FC<MessageItemProps> = ({
       </div>
 
       {/* メッセージ本文 */}
-      <div className="prose prose-sm dark:prose-invert max-w-none">
-        <ReactMarkdown>{content}</ReactMarkdown>
+      <div className="flex">
+        {/* タスクチェックボックス */}
+        {isTask && onTaskToggle && (
+          <div className="mr-2 mt-1">
+            <button
+              onClick={() => onTaskToggle(id)}
+              className="w-5 h-5 border rounded flex items-center justify-center"
+              aria-label={isCompleted ? "タスク完了を解除" : "タスクを完了としてマーク"}
+            >
+              {isCompleted && (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-primary" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+              )}
+            </button>
+          </div>
+        )}
+        
+        {/* メッセージコンテンツ */}
+        <div className={`prose prose-sm dark:prose-invert max-w-none ${isTask && isCompleted ? 'line-through text-gray-500 dark:text-gray-400' : ''}`}>
+          <ReactMarkdown>{content}</ReactMarkdown>
+        </div>
       </div>
 
       {/* タグとスレッド情報 */}

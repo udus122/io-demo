@@ -10,6 +10,7 @@ interface ThreadViewProps {
   onTagClick: (tag: string) => void;
   onArchiveToggle: (id: string) => void;
   onTaskToggle?: (id: string) => void;
+  onTaskStatusToggle?: (id: string) => void;
   onClose: () => void;
 }
 
@@ -20,6 +21,7 @@ const ThreadView: React.FC<ThreadViewProps> = ({
   onTagClick,
   onArchiveToggle,
   onTaskToggle,
+  onTaskStatusToggle,
   onClose,
 }) => {
   const { lastAddedMessageId } = useMessages();
@@ -90,6 +92,7 @@ const ThreadView: React.FC<ThreadViewProps> = ({
           onTagClick={onTagClick}
           onArchiveToggle={onArchiveToggle}
           onTaskToggle={onTaskToggle}
+          onTaskStatusToggle={onTaskStatusToggle}
         />
       </div>
 
@@ -114,6 +117,7 @@ const ThreadView: React.FC<ThreadViewProps> = ({
                 onTagClick={onTagClick}
                 onArchiveToggle={onArchiveToggle}
                 onTaskToggle={onTaskToggle}
+                onTaskStatusToggle={onTaskStatusToggle}
               />
             </div>
           ))

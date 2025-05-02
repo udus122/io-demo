@@ -9,6 +9,7 @@ interface MessageContextType {
   addTagToMessage: (messageId: string, tag: string) => void;
   toggleArchive: (messageId: string) => void;
   toggleTaskCompletion: (messageId: string) => void;
+  toggleTaskStatus: (messageId: string) => void;
   getAllTags: () => string[];
   getThreadReplies: (parentId: string) => Message[];
   getMessageById: (id: string) => Message | undefined;
@@ -122,6 +123,17 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
     );
   };
 
+  // メッセージのタスク状態を切り替え
+  const toggleTaskStatus = (messageId: string) => {
+    setMessages(prevMessages =>
+      prevMessages.map(msg =>
+        msg.id === messageId
+          ? { ...msg, isTask: !msg.isTask, isCompleted: false }
+          : msg
+      )
+    );
+  };
+
   // すべてのタグを取得
   const getAllTags = () => {
     const allTags = new Set<string>();
@@ -172,6 +184,7 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
         addTagToMessage,
         toggleArchive,
         toggleTaskCompletion,
+        toggleTaskStatus,
         getAllTags,
         getThreadReplies,
         getMessageById,

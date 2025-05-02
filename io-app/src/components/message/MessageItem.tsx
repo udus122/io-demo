@@ -16,6 +16,7 @@ interface MessageItemProps {
   onTagClick: (tag: string) => void;
   onArchiveToggle: (id: string) => void;
   onTaskToggle?: (id: string) => void;
+  onTaskStatusToggle?: (id: string) => void;
 }
 
 const MessageItem: React.FC<MessageItemProps> = ({
@@ -31,6 +32,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
   onTagClick,
   onArchiveToggle,
   onTaskToggle,
+  onTaskStatusToggle,
 }) => {
   return (
     <div className={`p-3 md:p-4 border-b border-gray-200 dark:border-gray-700 ${isArchived ? 'bg-gray-50 dark:bg-gray-800/50' : 'bg-white dark:bg-gray-800'}`}>
@@ -44,7 +46,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
             onClick={() => onReply(id)}
             className="text-xs text-gray-500 hover:text-primary p-1 md:p-0"
           >
-            返信
+            スレッド
           </button>
           <button
             onClick={() => onArchiveToggle(id)}
@@ -52,6 +54,14 @@ const MessageItem: React.FC<MessageItemProps> = ({
           >
             {isArchived ? 'アーカイブ解除' : 'アーカイブ'}
           </button>
+          {onTaskStatusToggle && (
+            <button
+              onClick={() => onTaskStatusToggle(id)}
+              className="text-xs text-gray-500 hover:text-primary p-1 md:p-0"
+            >
+              {isTask ? 'タスク解除' : 'タスク化'}
+            </button>
+          )}
         </div>
       </div>
 

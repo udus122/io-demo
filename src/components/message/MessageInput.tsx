@@ -4,6 +4,7 @@ interface MessageInputProps {
   onSendMessage: (content: string) => void;
   replyToId?: string;
   placeholder?: string;
+  taskFilter?: string;
 }
 
 // アイコンコンポーネント
@@ -84,7 +85,8 @@ type FormatType =
 const MessageInput: React.FC<MessageInputProps> = ({ 
   onSendMessage, 
   replyToId,
-  placeholder = 'メッセージを入力...'
+  placeholder = 'メッセージを入力...',
+  taskFilter = 'all'
 }) => {
   const [message, setMessage] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -394,7 +396,21 @@ const MessageInput: React.FC<MessageInputProps> = ({
 
   const handleSubmit = () => {
     if (message.trim()) {
-      onSendMessage(message);
+      // タスクフィルターが選択されている場合、自動的にタスクメッセージとして送信
+      let content = message;
+      if (taskFilter === 'tasks' || taskFilter === 'uncompleted-tasks' || taskFilter === 'completed-tasks') {
+        // メッセージが既にタスク形式（[]または[x]で始まる）でない場合のみ、先頭にマークを追加
+        const trimmedContent = content.trim();
+        if (!trimmedContent.startsWith('[]') && !trimmedContent.startsWith('[x]')) {
+          // 「完了済タスクのみ」の場合は[x]を追加、それ以外は[]を追加
+          if (taskFilter === 'completed-tasks') {
+            content = `[x]${content}`;
+          } else {
+            content = `[]${content}`;
+          }
+        }
+      }
+      onSendMessage(content);
       setMessage('');
     }
   };

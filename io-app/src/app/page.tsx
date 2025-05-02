@@ -117,6 +117,7 @@ const MainContent = () => {
               onReply={handleOpenThread}
               onTagClick={handleTagClick}
               onArchiveToggle={toggleArchive}
+              onTaskToggle={handleTaskToggle}
             />
           ) : (
             <>

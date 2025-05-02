@@ -12,7 +12,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, sidebar }) => {
   
   // アクティブなチャンネル名を取得
   const activeChannel = channels.find(channel => channel.id === activeChannelId);
-  const activeChannelName = activeChannel?.name || '一般';
+  const activeChannelName = activeChannel?.name || 'Inbox';
   
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-gray-900">

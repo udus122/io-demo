@@ -57,14 +57,14 @@ export const UIProvider: React.FC<UIProviderProps> = ({ children }) => {
         console.error('Failed to parse stored channels:', error);
       }
     } else {
-      // チャンネルがない場合は「一般」チャンネルを作成
-      const generalChannel: Channel = {
+      // チャンネルがない場合は「Inbox」チャンネルを作成
+      const inboxChannel: Channel = {
         id: uuidv4(),
-        name: '一般',
+        name: 'Inbox',
         createdAt: new Date()
       };
-      setChannels([generalChannel]);
-      setActiveChannelId(generalChannel.id);
+      setChannels([inboxChannel]);
+      setActiveChannelId(inboxChannel.id);
     }
   }, []);
 

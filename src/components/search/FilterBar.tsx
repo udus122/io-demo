@@ -86,10 +86,10 @@ const FilterBar: React.FC = () => {
               ? 'bg-primary text-white' 
               : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600'
           }`}
-          aria-label="未完了たすくのみを表示"
+          aria-label="未完了タスクのみを表示"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" />
           </svg>
           <span className="ml-1 hidden sm:inline">未完了タスクのみを表示</span>
         </button>

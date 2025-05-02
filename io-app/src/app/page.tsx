@@ -21,6 +21,7 @@ const MainContent = () => {
     lastAddedMessageId,
     addMessage, 
     toggleArchive, 
+    toggleTaskCompletion,
     getAllTags, 
     getThreadReplies, 
     getMessageById, 
@@ -67,6 +68,11 @@ const MainContent = () => {
   const handleFilterChange = (filter: string) => {
     setActiveFilter(filter);
     setSelectedTag(null);
+  };
+
+  // タスク完了状態の切り替え
+  const handleTaskToggle = (messageId: string) => {
+    toggleTaskCompletion(messageId);
   };
 
   // フィルタリングされたメッセージ
@@ -130,6 +136,7 @@ const MainContent = () => {
                     onReply={handleOpenThread}
                     onTagClick={handleTagClick}
                     onArchiveToggle={toggleArchive}
+                    onTaskToggle={handleTaskToggle}
                     lastAddedMessageId={lastAddedMessageId}
                   />
                 </div>
@@ -150,6 +157,7 @@ const MainContent = () => {
                       onSendReply={handleSendReply}
                       onTagClick={handleTagClick}
                       onArchiveToggle={toggleArchive}
+                      onTaskToggle={handleTaskToggle}
                       onClose={handleCloseThread}
                     />
                   </div>

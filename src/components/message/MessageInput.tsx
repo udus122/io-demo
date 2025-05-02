@@ -110,19 +110,31 @@ const MessageInput: React.FC<MessageInputProps> = ({
           className="w-full p-2 md:p-3 resize-none focus:outline-none bg-transparent min-h-[72px]"
           style={{ overflow: 'hidden' }}
         />
-        <div className="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-700">
-          <div className="hidden sm:block text-xs text-gray-500 dark:text-gray-400">
+        {/* デスクトップ表示用のコントロールエリア（md以上の画面サイズで表示） */}
+        <div className="hidden md:flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-700">
+          <div className="text-xs text-gray-500 dark:text-gray-400">
             {replyToId ? '返信を作成中...' : 'Markdownが使用できます | ⌘+Enter / Ctrl+Enterで送信'}
           </div>
           <button
             onClick={handleSubmit}
             disabled={!message.trim()}
-            className="px-3 py-1 md:px-4 md:py-1 bg-primary text-white rounded-md disabled:opacity-50 text-sm md:text-base"
+            className="px-4 py-1 bg-primary text-white rounded-md disabled:opacity-50 text-base"
           >
             送信
           </button>
         </div>
       </div>
+      
+      {/* モバイル表示用の送信ボタン（md未満の画面サイズで表示、右下に固定） */}
+      <button
+        onClick={handleSubmit}
+        disabled={!message.trim()}
+        className="md:hidden fixed bottom-4 right-4 w-12 h-12 flex items-center justify-center bg-primary text-white rounded-full shadow-lg disabled:opacity-50 z-10"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+        </svg>
+      </button>
     </div>
   );
 };

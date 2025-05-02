@@ -7,6 +7,7 @@ interface MessageListProps {
   onReply: (id: string) => void;
   onTagClick: (tag: string) => void;
   onArchiveToggle: (id: string) => void;
+  onTaskToggle?: (id: string) => void;
   lastAddedMessageId?: string | null;
 }
 
@@ -15,6 +16,7 @@ const MessageList: React.FC<MessageListProps> = ({
   onReply,
   onTagClick,
   onArchiveToggle,
+  onTaskToggle,
   lastAddedMessageId,
 }) => {
   // 親メッセージ（スレッドの開始メッセージ）のみをフィルタリング
@@ -58,10 +60,13 @@ const MessageList: React.FC<MessageListProps> = ({
               createdAt={message.createdAt}
               tags={message.tags}
               isArchived={message.isArchived}
+              isTask={message.isTask}
+              isCompleted={message.isCompleted}
               hasThread={message.hasReplies}
               onReply={onReply}
               onTagClick={onTagClick}
               onArchiveToggle={onArchiveToggle}
+              onTaskToggle={onTaskToggle}
             />
           </div>
         ))

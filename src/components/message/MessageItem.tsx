@@ -579,7 +579,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
               autoFocus
             />
             <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-              タスクとして設定するには、テキストの先頭に[]を追加してください。
+              テキストの先頭に[]を追加するとタスクになります。
               ⌘+Enter / Ctrl+Enterで保存。
             </div>
           </div>

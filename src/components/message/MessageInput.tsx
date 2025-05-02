@@ -608,7 +608,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
         {/* デスクトップ表示用のコントロールエリア（md以上の画面サイズで表示） */}
         <div className="hidden md:flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-700">
           <div className="text-xs text-gray-500 dark:text-gray-400">
-            {replyToId ? '返信を作成中...' : 'Markdownが使用できます | ⌘+Enter / Ctrl+Enterで送信'}
+            {replyToId ? '返信を作成中...' : 'テキストの先頭に[]を追加するとタスクになります。 | ⌘+Enter / Ctrl+Enterで送信'}
           </div>
           <button
             onClick={handleSubmit}

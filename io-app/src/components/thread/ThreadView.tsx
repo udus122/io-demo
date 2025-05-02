@@ -24,7 +24,7 @@ const ThreadView: React.FC<ThreadViewProps> = ({
   onTaskStatusToggle,
   onClose,
 }) => {
-  const { lastAddedMessageId } = useMessages();
+  const { lastAddedMessageId, editMessage } = useMessages();
   const repliesEndRef = useRef<HTMLDivElement>(null);
   const [highlightedMessageId, setHighlightedMessageId] = useState<string | null>(null);
 
@@ -79,21 +79,22 @@ const ThreadView: React.FC<ThreadViewProps> = ({
 
       {/* 親メッセージ */}
       <div className="border-b border-gray-200 dark:border-gray-700">
-        <MessageItem
-          id={parentMessage.id}
-          content={parentMessage.content}
-          createdAt={parentMessage.createdAt}
-          tags={parentMessage.tags}
-          isArchived={parentMessage.isArchived}
-          isTask={parentMessage.isTask}
-          isCompleted={parentMessage.isCompleted}
-          hasThread={false}
-          onReply={() => {}}
-          onTagClick={onTagClick}
-          onArchiveToggle={onArchiveToggle}
-          onTaskToggle={onTaskToggle}
-          onTaskStatusToggle={onTaskStatusToggle}
-        />
+            <MessageItem
+              id={parentMessage.id}
+              content={parentMessage.content}
+              createdAt={parentMessage.createdAt}
+              tags={parentMessage.tags}
+              isArchived={parentMessage.isArchived}
+              isTask={parentMessage.isTask}
+              isCompleted={parentMessage.isCompleted}
+              hasThread={false}
+              onReply={() => {}}
+              onTagClick={onTagClick}
+              onArchiveToggle={onArchiveToggle}
+              onTaskToggle={onTaskToggle}
+              onTaskStatusToggle={onTaskStatusToggle}
+              onEdit={editMessage}
+            />
       </div>
 
       {/* 返信リスト */}
@@ -118,6 +119,7 @@ const ThreadView: React.FC<ThreadViewProps> = ({
                 onArchiveToggle={onArchiveToggle}
                 onTaskToggle={onTaskToggle}
                 onTaskStatusToggle={onTaskStatusToggle}
+                onEdit={editMessage}
               />
             </div>
           ))

@@ -6,6 +6,7 @@ interface MessageContextType {
   messages: Message[];
   lastAddedMessageId: string | null;
   addMessage: (content: string, parentId?: string | null) => void;
+  editMessage: (messageId: string, newContent: string) => void;
   addTagToMessage: (messageId: string, tag: string) => void;
   toggleArchive: (messageId: string) => void;
   toggleTaskCompletion: (messageId: string) => void;
@@ -181,12 +182,37 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
     return filteredMessages;
   };
 
+  // メッセージを編集
+  const editMessage = (messageId: string, newContent: string) => {
+    // コンテンツからタグを抽出（日本語対応）
+    const tagRegex = /#([^\s#]+)/g;
+    const tags: string[] = [];
+    let match;
+    while ((match = tagRegex.exec(newContent)) !== null) {
+      tags.push(match[1]);
+    }
+
+    // メッセージが[]で始まる場合はタスクとして認識
+    const isTask = newContent.trim().startsWith('[]');
+    // タスクの場合は[]を除去したコンテンツを使用
+    const cleanContent = isTask ? newContent.replace(/^\[\]/, '').trim() : newContent;
+
+    setMessages(prevMessages =>
+      prevMessages.map(msg =>
+        msg.id === messageId
+          ? { ...msg, content: cleanContent, tags, isTask }
+          : msg
+      )
+    );
+  };
+
   return (
     <MessageContext.Provider
       value={{
         messages,
         lastAddedMessageId,
         addMessage,
+        editMessage,
         addTagToMessage,
         toggleArchive,
         toggleTaskCompletion,

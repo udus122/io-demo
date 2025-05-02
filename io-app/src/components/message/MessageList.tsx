@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import MessageItem from './MessageItem';
 import { MessageWithThreadInfo } from '@/types';
+import { useMessages } from '@/contexts/MessageContext';
 
 interface MessageListProps {
   messages: MessageWithThreadInfo[];
@@ -21,6 +22,7 @@ const MessageList: React.FC<MessageListProps> = ({
   onTaskStatusToggle,
   lastAddedMessageId,
 }) => {
+  const { editMessage } = useMessages();
   // 親メッセージ（スレッドの開始メッセージ）のみをフィルタリング
   const rootMessages = messages.filter(message => message.parentId === null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -70,6 +72,7 @@ const MessageList: React.FC<MessageListProps> = ({
               onArchiveToggle={onArchiveToggle}
               onTaskToggle={onTaskToggle}
               onTaskStatusToggle={onTaskStatusToggle}
+              onEdit={editMessage}
             />
           </div>
         ))

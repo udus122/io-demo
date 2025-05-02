@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
 import MessageItem from '../message/MessageItem';
-import MessageInput from '../message/MessageInput';
 import { Message } from '@/types';
 import { useMessages } from '@/contexts/MessageContext';
 
@@ -48,10 +47,20 @@ const ThreadView: React.FC<ThreadViewProps> = ({
     <div className="flex flex-col h-full border-l border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
       {/* ヘッダー */}
       <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-        <h2 className="font-semibold">スレッド</h2>
+        <div className="flex items-center">
+          {/* モバイル用の戻るボタン */}
+          <button
+            onClick={onClose}
+            className="md:hidden mr-2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+          >
+            ← 戻る
+          </button>
+          <h2 className="font-semibold">スレッド</h2>
+        </div>
+        {/* デスクトップ用の閉じるボタン */}
         <button
           onClick={onClose}
-          className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+          className="hidden md:block text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
         >
           ✕
         </button>
@@ -73,7 +82,7 @@ const ThreadView: React.FC<ThreadViewProps> = ({
       </div>
 
       {/* 返信リスト */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto pb-4">
         {replies.length > 0 ? (
           replies.map(reply => (
             <div 
@@ -100,13 +109,6 @@ const ThreadView: React.FC<ThreadViewProps> = ({
         )}
         <div ref={repliesEndRef} />
       </div>
-
-      {/* 返信入力 */}
-      <MessageInput
-        onSendMessage={onSendReply}
-        replyToId={parentMessage.id}
-        placeholder="返信を入力..."
-      />
     </div>
   );
 };

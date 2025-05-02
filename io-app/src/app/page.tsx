@@ -104,7 +104,7 @@ const MainContent = () => {
         {/* 検索オプション */}
         <SearchOptions isVisible={showSearchOptions} />
         
-        <div className="flex flex-1 overflow-hidden">
+        <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
           {/* 検索結果またはメッセージリスト */}
           {isSearchActive ? (
             <SearchResults
@@ -113,30 +113,49 @@ const MainContent = () => {
               onArchiveToggle={toggleArchive}
             />
           ) : (
-            <div className={`flex flex-col ${activeThreadId ? 'w-1/2' : 'w-full'}`}>
-              <MessageList
-                messages={messagesWithThreadInfo}
-                onReply={handleOpenThread}
-                onTagClick={handleTagClick}
-                onArchiveToggle={toggleArchive}
-                lastAddedMessageId={lastAddedMessageId}
-              />
-              <MessageInput onSendMessage={handleSendMessage} />
-            </div>
-          )}
+            <>
+              {/* メッセージリスト - モバイルではスレッド表示時に非表示 */}
+              <div className={`
+                flex-1 overflow-auto
+                ${activeThreadId ? 'hidden md:block md:w-1/2' : 'w-full'}
+                transition-all duration-300
+              `}>
+                <MessageList
+                  messages={messagesWithThreadInfo}
+                  onReply={handleOpenThread}
+                  onTagClick={handleTagClick}
+                  onArchiveToggle={toggleArchive}
+                  lastAddedMessageId={lastAddedMessageId}
+                />
+              </div>
 
-          {/* スレッドエリア - 検索中は非表示 */}
-          {activeThreadId && !isSearchActive && (
-            <div className="w-1/2">
-              <ThreadView
-                parentMessage={activeThreadParent}
-                replies={activeThreadReplies}
-                onSendReply={handleSendReply}
-                onTagClick={handleTagClick}
-                onArchiveToggle={toggleArchive}
-                onClose={handleCloseThread}
-              />
-            </div>
+              {/* スレッドエリア - 検索中は非表示 */}
+              {activeThreadId && (
+                <div className="w-full md:w-1/2 flex-1 overflow-auto">
+                  <ThreadView
+                    parentMessage={activeThreadParent}
+                    replies={activeThreadReplies}
+                    onSendReply={handleSendReply}
+                    onTagClick={handleTagClick}
+                    onArchiveToggle={toggleArchive}
+                    onClose={handleCloseThread}
+                  />
+                </div>
+              )}
+              
+              {/* メッセージ入力欄 - 常に表示 */}
+              <div className="mt-auto">
+                {activeThreadId ? (
+                  <MessageInput 
+                    onSendMessage={handleSendReply} 
+                    replyToId={activeThreadId}
+                    placeholder="返信を入力..."
+                  />
+                ) : (
+                  <MessageInput onSendMessage={handleSendMessage} />
+                )}
+              </div>
+            </>
           )}
         </div>
       </div>

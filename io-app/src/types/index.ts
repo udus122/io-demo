@@ -5,6 +5,8 @@ export interface Message {
   tags: string[];
   isArchived: boolean;
   parentId: string | null;
+  isTask: boolean;
+  isCompleted: boolean;
 }
 
 export interface MessageWithThreadInfo extends Message {

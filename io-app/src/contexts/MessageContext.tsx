@@ -8,6 +8,7 @@ interface MessageContextType {
   addMessage: (content: string, parentId?: string | null) => void;
   addTagToMessage: (messageId: string, tag: string) => void;
   toggleArchive: (messageId: string) => void;
+  toggleTaskCompletion: (messageId: string) => void;
   getAllTags: () => string[];
   getThreadReplies: (parentId: string) => Message[];
   getMessageById: (id: string) => Message | undefined;
@@ -65,14 +66,21 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
       tags.push(match[1]);
     }
 
+    // メッセージが[]で始まる場合はタスクとして認識
+    const isTask = content.trim().startsWith('[]');
+    // タスクの場合は[]を除去したコンテンツを使用
+    const cleanContent = isTask ? content.replace(/^\[\]/, '').trim() : content;
+
     const newMessageId = uuidv4();
     const newMessage: Message = {
       id: newMessageId,
-      content,
+      content: cleanContent,
       createdAt: new Date(),
       tags,
       isArchived: false,
       parentId,
+      isTask,
+      isCompleted: false
     };
 
     setMessages(prevMessages => [...prevMessages, newMessage]);
@@ -98,6 +106,17 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
       prevMessages.map(msg =>
         msg.id === messageId
           ? { ...msg, isArchived: !msg.isArchived }
+          : msg
+      )
+    );
+  };
+
+  // タスクの完了状態を切り替え
+  const toggleTaskCompletion = (messageId: string) => {
+    setMessages(prevMessages =>
+      prevMessages.map(msg =>
+        msg.id === messageId && msg.isTask
+          ? { ...msg, isCompleted: !msg.isCompleted }
           : msg
       )
     );
@@ -131,6 +150,9 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
       filteredMessages = filteredMessages.filter(msg => msg.isArchived);
     } else if (filter === 'unarchived') {
       filteredMessages = filteredMessages.filter(msg => !msg.isArchived);
+    } else if (filter === 'tasks') {
+      // タスクのみをフィルタリング
+      filteredMessages = filteredMessages.filter(msg => msg.isTask);
     }
 
     // タグでフィルタリング
@@ -149,6 +171,7 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
         addMessage,
         addTagToMessage,
         toggleArchive,
+        toggleTaskCompletion,
         getAllTags,
         getThreadReplies,
         getMessageById,

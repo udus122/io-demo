@@ -1,0 +1,126 @@
+'use client';
+
+import React, { useState } from 'react';
+import MainLayout from '@/components/layout/MainLayout';
+import Sidebar from '@/components/layout/Sidebar';
+import MessageList from '@/components/message/MessageList';
+import MessageInput from '@/components/message/MessageInput';
+import ThreadView from '@/components/thread/ThreadView';
+import { MessageProvider, useMessages } from '@/contexts/MessageContext';
+import { UIProvider, useUI } from '@/contexts/UIContext';
+
+const MainContent = () => {
+  const { 
+    messages, 
+    addMessage, 
+    toggleArchive, 
+    getAllTags, 
+    getThreadReplies, 
+    getMessageById, 
+    filterMessages 
+  } = useMessages();
+  
+  const { 
+    activeFilter, 
+    selectedTag, 
+    activeThreadId, 
+    setActiveFilter, 
+    setSelectedTag, 
+    setActiveThreadId 
+  } = useUI();
+
+  // メッセージの送信
+  const handleSendMessage = (content: string) => {
+    addMessage(content);
+  };
+
+  // スレッドへの返信
+  const handleSendReply = (content: string) => {
+    if (activeThreadId) {
+      addMessage(content, activeThreadId);
+    }
+  };
+
+  // スレッドを開く
+  const handleOpenThread = (messageId: string) => {
+    setActiveThreadId(messageId);
+  };
+
+  // スレッドを閉じる
+  const handleCloseThread = () => {
+    setActiveThreadId(null);
+  };
+
+  // タグをクリック
+  const handleTagClick = (tag: string) => {
+    setSelectedTag(tag);
+  };
+
+  // フィルター変更
+  const handleFilterChange = (filter: string) => {
+    setActiveFilter(filter);
+    setSelectedTag(null);
+  };
+
+  // フィルタリングされたメッセージ
+  const filteredMessages = filterMessages(activeFilter, selectedTag || undefined);
+
+  // アクティブなスレッドの親メッセージと返信
+  const activeThreadParent = activeThreadId ? getMessageById(activeThreadId) || null : null;
+  const activeThreadReplies = activeThreadId ? getThreadReplies(activeThreadId) : [];
+
+  // メッセージにスレッドがあるかどうかを判定
+  const messagesWithThreadInfo = filteredMessages.map(msg => ({
+    ...msg,
+    hasReplies: messages.some(m => m.parentId === msg.id)
+  }));
+
+  return (
+    <MainLayout
+      sidebar={
+        <Sidebar
+          tags={getAllTags()}
+          onTagSelect={handleTagClick}
+          onFilterChange={handleFilterChange}
+        />
+      }
+    >
+      <div className="flex h-full">
+        {/* メインメッセージエリア */}
+        <div className={`flex flex-col ${activeThreadId ? 'w-1/2' : 'w-full'}`}>
+          <MessageList
+            messages={messagesWithThreadInfo}
+            onReply={handleOpenThread}
+            onTagClick={handleTagClick}
+            onArchiveToggle={toggleArchive}
+          />
+          <MessageInput onSendMessage={handleSendMessage} />
+        </div>
+
+        {/* スレッドエリア */}
+        {activeThreadId && (
+          <div className="w-1/2">
+            <ThreadView
+              parentMessage={activeThreadParent}
+              replies={activeThreadReplies}
+              onSendReply={handleSendReply}
+              onTagClick={handleTagClick}
+              onArchiveToggle={toggleArchive}
+              onClose={handleCloseThread}
+            />
+          </div>
+        )}
+      </div>
+    </MainLayout>
+  );
+};
+
+export default function Home() {
+  return (
+    <MessageProvider>
+      <UIProvider>
+        <MainContent />
+      </UIProvider>
+    </MessageProvider>
+  );
+}

@@ -13,6 +13,7 @@ interface MessageItemProps {
   isTask?: boolean;
   isCompleted?: boolean;
   hasThread: boolean;
+  replyCount?: number;
   onReply: (id: string) => void;
   onTagClick: (tag: string) => void;
   onArchiveToggle: (id: string) => void;
@@ -30,6 +31,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
   isTask = false,
   isCompleted = false,
   hasThread,
+  replyCount,
   onReply,
   onTagClick,
   onArchiveToggle,
@@ -175,7 +177,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
         
         {hasThread && (
           <div className="ml-auto text-xs text-primary cursor-pointer" onClick={() => onReply(id)}>
-            スレッドを表示
+            スレッドを表示 {replyCount && `(${replyCount})`}
           </div>
         )}
       </div>

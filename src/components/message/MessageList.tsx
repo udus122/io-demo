@@ -67,6 +67,7 @@ const MessageList: React.FC<MessageListProps> = ({
               isTask={message.isTask}
               isCompleted={message.isCompleted}
               hasThread={message.hasReplies}
+              replyCount={message.replyCount}
               onReply={onReply}
               onTagClick={onTagClick}
               onArchiveToggle={onArchiveToggle}

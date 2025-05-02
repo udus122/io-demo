@@ -11,4 +11,5 @@ export interface Message {
 
 export interface MessageWithThreadInfo extends Message {
   hasReplies: boolean;
+  replyCount?: number;
 }

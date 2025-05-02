@@ -88,11 +88,15 @@ const MainContent = () => {
   const activeThreadParent = activeThreadId ? getMessageById(activeThreadId) || null : null;
   const activeThreadReplies = activeThreadId ? getThreadReplies(activeThreadId) : [];
 
-  // メッセージにスレッドがあるかどうかを判定
-  const messagesWithThreadInfo = filteredMessages.map(msg => ({
-    ...msg,
-    hasReplies: messages.some(m => m.parentId === msg.id)
-  }));
+  // メッセージにスレッドがあるかどうかを判定し、返信数も計算
+  const messagesWithThreadInfo = filteredMessages.map(msg => {
+    const replies = messages.filter(m => m.parentId === msg.id);
+    return {
+      ...msg,
+      hasReplies: replies.length > 0,
+      replyCount: replies.length > 0 ? replies.length : undefined
+    };
+  });
 
   // 検索オプションの表示/非表示を切り替える
   const toggleSearchOptions = () => {

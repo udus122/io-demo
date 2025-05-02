@@ -131,36 +131,78 @@ const MessageInput: React.FC<MessageInputProps> = ({
           : selectionEnd + 7;
         break;
       case 'bulletList':
-        // 選択範囲がある場合は各行に箇条書きを適用
+        // 選択範囲がある場合は各行に箇条書きを適用またはトグル
         if (selectionStart !== selectionEnd) {
           const lines = selectedText.split('\n');
-          formattedText = lines.map(line => `- ${line}`).join('\n');
+          formattedText = lines.map(line => {
+            // 既に箇条書きの場合は削除、そうでなければ追加
+            const bulletPattern = /^(\s*)- (.*)$/;
+            const match = line.match(bulletPattern);
+            return match ? `${match[1]}${match[2]}` : `- ${line}`;
+          }).join('\n');
           newCursorPos = selectionStart + formattedText.length;
         } else {
-          // 選択範囲がない場合は現在行に箇条書きを追加
-          formattedText = `- `;
-          const newValue = value.substring(0, currentLineStart) + formattedText + value.substring(currentLineStart);
-          setMessage(newValue);
-          setTimeout(() => {
-            textarea.setSelectionRange(currentLineStart + 2, currentLineStart + 2);
-          }, 0);
+          // 選択範囲がない場合は現在行の箇条書きをトグル
+          const bulletPattern = /^(\s*)- (.*)$/;
+          const match = currentLine.match(bulletPattern);
+          
+          if (match) {
+            // 箇条書きを削除
+            const newLine = `${match[1]}${match[2]}`;
+            const newValue = value.substring(0, currentLineStart) + newLine + value.substring(lineEnd);
+            setMessage(newValue);
+            // カーソル位置を調整（箇条書きマークの分だけ戻す）
+            const newPosition = selectionStart - 2;
+            setTimeout(() => {
+              textarea.setSelectionRange(newPosition, newPosition);
+            }, 0);
+          } else {
+            // 箇条書きを追加
+            formattedText = `- `;
+            const newValue = value.substring(0, currentLineStart) + formattedText + value.substring(currentLineStart);
+            setMessage(newValue);
+            setTimeout(() => {
+              textarea.setSelectionRange(currentLineStart + 2, currentLineStart + 2);
+            }, 0);
+          }
           return;
         }
         break;
       case 'numberList':
-        // 選択範囲がある場合は各行に番号付きリストを適用
+        // 選択範囲がある場合は各行に番号付きリストを適用またはトグル
         if (selectionStart !== selectionEnd) {
           const lines = selectedText.split('\n');
-          formattedText = lines.map((line, index) => `${index + 1}. ${line}`).join('\n');
+          formattedText = lines.map((line, index) => {
+            // 既に番号付きリストの場合は削除、そうでなければ追加
+            const numberPattern = /^(\s*)(\d+)\. (.*)$/;
+            const match = line.match(numberPattern);
+            return match ? `${match[1]}${match[3]}` : `${index + 1}. ${line}`;
+          }).join('\n');
           newCursorPos = selectionStart + formattedText.length;
         } else {
-          // 選択範囲がない場合は現在行に番号付きリストを追加
-          formattedText = `1. `;
-          const newValue = value.substring(0, currentLineStart) + formattedText + value.substring(currentLineStart);
-          setMessage(newValue);
-          setTimeout(() => {
-            textarea.setSelectionRange(currentLineStart + 3, currentLineStart + 3);
-          }, 0);
+          // 選択範囲がない場合は現在行の番号付きリストをトグル
+          const numberPattern = /^(\s*)(\d+)\. (.*)$/;
+          const match = currentLine.match(numberPattern);
+          
+          if (match) {
+            // 番号付きリストを削除
+            const newLine = `${match[1]}${match[3]}`;
+            const newValue = value.substring(0, currentLineStart) + newLine + value.substring(lineEnd);
+            setMessage(newValue);
+            // カーソル位置を調整（番号付きリストマークの分だけ戻す）
+            const newPosition = selectionStart - (match[2].length + 2);
+            setTimeout(() => {
+              textarea.setSelectionRange(newPosition, newPosition);
+            }, 0);
+          } else {
+            // 番号付きリストを追加
+            formattedText = `1. `;
+            const newValue = value.substring(0, currentLineStart) + formattedText + value.substring(currentLineStart);
+            setMessage(newValue);
+            setTimeout(() => {
+              textarea.setSelectionRange(currentLineStart + 3, currentLineStart + 3);
+            }, 0);
+          }
           return;
         }
         break;

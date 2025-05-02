@@ -167,7 +167,8 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
     // アーカイブ状態でフィルタリング
     if (archiveFilter === 'archived') {
       filteredMessages = filteredMessages.filter(msg => msg.isArchived);
-    } else if (archiveFilter === 'unarchived') {
+    } else {
+      // デフォルトは 'unarchived'
       filteredMessages = filteredMessages.filter(msg => !msg.isArchived);
     }
 

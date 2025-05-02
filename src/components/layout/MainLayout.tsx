@@ -19,7 +19,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, sidebar }) => {
       {/* サイドバー - モバイルではオフキャンバス、デスクトップでは表示/非表示を切り替え可能 */}
       <div className={`
         fixed md:static md:flex flex-col
-        ${isSidebarVisible ? 'w-64' : 'w-16'} h-full z-30
+        ${isSidebarVisible ? 'w-64' : 'w-16'} h-screen z-30
         transform transition-all duration-300 ease-in-out
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
         ${isSidebarVisible ? 'md:translate-x-0' : 'md:translate-x-0'}

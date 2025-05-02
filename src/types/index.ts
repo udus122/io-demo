@@ -1,3 +1,9 @@
+export interface Channel {
+  id: string;
+  name: string;
+  createdAt: Date;
+}
+
 export interface Message {
   id: string;
   content: string;
@@ -7,6 +13,7 @@ export interface Message {
   parentId: string | null;
   isTask: boolean;
   isCompleted: boolean;
+  channelId: string;
 }
 
 export interface MessageWithThreadInfo extends Message {

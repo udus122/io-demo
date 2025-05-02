@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useUI } from '@/contexts/UIContext';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -7,6 +8,11 @@ interface MainLayoutProps {
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children, sidebar }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { channels, activeChannelId } = useUI();
+  
+  // アクティブなチャンネル名を取得
+  const activeChannel = channels.find(channel => channel.id === activeChannelId);
+  const activeChannelName = activeChannel?.name || '一般';
   
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
@@ -56,6 +62,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, sidebar }) => {
             ≡
           </button>
           <h1 className="text-xl font-bold md:hidden">IO</h1>
+          <div className="ml-4 text-lg font-medium"># {activeChannelName}</div>
         </div>
         
         {/* コンテンツ */}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useUI } from '@/contexts/UIContext';
 
 interface SidebarProps {
@@ -8,10 +8,85 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ tags, onTagSelect, onFilterChange }) => {
-  const { activeFilter, selectedTag } = useUI();
+  const { activeFilter, selectedTag, channels, activeChannelId, setActiveChannelId, addChannel } = useUI();
+  const [newChannelName, setNewChannelName] = useState('');
+  const [isAddingChannel, setIsAddingChannel] = useState(false);
+
+  // チャンネル選択
+  const handleChannelSelect = (channelId: string) => {
+    setActiveChannelId(channelId);
+  };
+
+  // 新しいチャンネルを追加
+  const handleAddChannel = () => {
+    if (newChannelName.trim()) {
+      addChannel(newChannelName.trim());
+      setNewChannelName('');
+      setIsAddingChannel(false);
+    }
+  };
+
+  // Enterキーで新しいチャンネルを追加
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleAddChannel();
+    }
+  };
+
   return (
     <div className="flex flex-col h-full p-4">
       <h1 className="text-2xl font-bold mb-6 text-primary">IO</h1>
+      
+      {/* チャンネルリスト */}
+      <div className="mb-6">
+        <div className="flex justify-between items-center mb-2">
+          <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400">チャンネル</h2>
+          <button 
+            onClick={() => setIsAddingChannel(true)}
+            className="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+            aria-label="チャンネルを追加"
+          >
+            +
+          </button>
+        </div>
+        
+        {/* チャンネル追加フォーム */}
+        {isAddingChannel && (
+          <div className="mb-2 flex">
+            <input
+              type="text"
+              value={newChannelName}
+              onChange={(e) => setNewChannelName(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="チャンネル名"
+              className="flex-1 px-2 py-1 text-sm border rounded-l-md focus:outline-none focus:ring-1 focus:ring-primary"
+              autoFocus
+            />
+            <button
+              onClick={handleAddChannel}
+              className="px-2 py-1 bg-primary text-white rounded-r-md text-sm"
+            >
+              追加
+            </button>
+          </div>
+        )}
+        
+        {/* チャンネル一覧 */}
+        <div className="space-y-1 mb-4">
+          {channels.map((channel) => (
+            <button
+              key={channel.id}
+              onClick={() => handleChannelSelect(channel.id)}
+              className={`w-full text-left px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center ${
+                activeChannelId === channel.id ? 'bg-gray-100 dark:bg-gray-700 font-medium' : ''
+              }`}
+            >
+              <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
+              {channel.name}
+            </button>
+          ))}
+        </div>
+      </div>
       
       {/* フィルターコントロール */}
       <div className="mb-6">

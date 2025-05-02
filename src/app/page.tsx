@@ -196,12 +196,12 @@ const MainContent = () => {
 
 export default function Home() {
   return (
-    <MessageProvider>
-      <UIProvider>
+    <UIProvider>
+      <MessageProvider>
         <SearchProvider>
           <MainContent />
         </SearchProvider>
-      </UIProvider>
-    </MessageProvider>
+      </MessageProvider>
+    </UIProvider>
   );
 }

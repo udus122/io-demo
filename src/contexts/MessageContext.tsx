@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { Message } from '@/types';
+import { useUI } from './UIContext';
 
 interface MessageContextType {
   messages: Message[];
@@ -32,6 +33,7 @@ interface MessageProviderProps {
 }
 
 export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) => {
+  const { activeChannelId } = useUI();
   const [messages, setMessages] = useState<Message[]>([]);
   const [lastAddedMessageId, setLastAddedMessageId] = useState<string | null>(null);
 
@@ -41,17 +43,19 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
     if (storedMessages) {
       try {
         const parsedMessages = JSON.parse(storedMessages);
-        // 日付文字列をDateオブジェクトに変換
+        // 日付文字列をDateオブジェクトに変換し、必要に応じてchannelIdを追加
         const messagesWithDates = parsedMessages.map((msg: any) => ({
           ...msg,
-          createdAt: new Date(msg.createdAt)
+          createdAt: new Date(msg.createdAt),
+          // channelIdがない場合はアクティブなチャンネルIDを設定
+          channelId: msg.channelId || activeChannelId
         }));
         setMessages(messagesWithDates);
       } catch (error) {
         console.error('Failed to parse stored messages:', error);
       }
     }
-  }, []);
+  }, [activeChannelId]);
 
   // メッセージが変更されたらLocalStorageに保存
   useEffect(() => {
@@ -82,7 +86,8 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
       isArchived: false,
       parentId,
       isTask,
-      isCompleted: false
+      isCompleted: false,
+      channelId: activeChannelId
     };
 
     setMessages(prevMessages => [...prevMessages, newMessage]);
@@ -156,7 +161,8 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
 
   // メッセージをフィルタリング
   const filterMessages = (filter: string, selectedTag?: string) => {
-    let filteredMessages = messages;
+    // まず現在のチャンネルのメッセージのみをフィルタリング
+    let filteredMessages = messages.filter(msg => msg.channelId === activeChannelId);
 
     // アーカイブ状態でフィルタリング
     if (filter === 'archived') {

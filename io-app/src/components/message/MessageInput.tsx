@@ -21,7 +21,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
       e.preventDefault();
       handleSubmit();
     }
@@ -40,7 +40,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
         />
         <div className="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-700">
           <div className="text-xs text-gray-500 dark:text-gray-400">
-            {replyToId ? '返信を作成中...' : 'Markdownが使用できます'}
+            {replyToId ? '返信を作成中...' : 'Markdownが使用できます | ⌘+Enter / Ctrl+Enterで送信'}
           </div>
           <button
             onClick={handleSubmit}

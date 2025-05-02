@@ -9,7 +9,7 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ tags, onTagSelect, onArchiveFilterChange, onTaskFilterChange }) => {
-  const { archiveFilter, taskFilter, selectedTag, channels, activeChannelId, setActiveChannelId, addChannel } = useUI();
+  const { archiveFilter, taskFilter, selectedTag, channels, activeChannelId, setActiveChannelId, addChannel, deleteChannel } = useUI();
   const [newChannelName, setNewChannelName] = useState('');
   const [isAddingChannel, setIsAddingChannel] = useState(false);
 
@@ -25,6 +25,12 @@ const Sidebar: React.FC<SidebarProps> = ({ tags, onTagSelect, onArchiveFilterCha
       setNewChannelName('');
       setIsAddingChannel(false);
     }
+  };
+
+  // チャンネルを削除
+  const handleDeleteChannel = (channelId: string, e: React.MouseEvent) => {
+    e.stopPropagation(); // チャンネル選択イベントが発火しないようにする
+    deleteChannel(channelId);
   };
 
   // Enterキーで新しいチャンネルを追加
@@ -75,16 +81,32 @@ const Sidebar: React.FC<SidebarProps> = ({ tags, onTagSelect, onArchiveFilterCha
         {/* チャンネル一覧 */}
         <div className="space-y-1 mb-4">
           {channels.map((channel) => (
-            <button
+            <div
               key={channel.id}
-              onClick={() => handleChannelSelect(channel.id)}
-              className={`w-full text-left px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center ${
-                activeChannelId === channel.id ? 'bg-gray-100 dark:bg-gray-700 font-medium' : ''
-              }`}
+              className="flex items-center group"
             >
-              <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
-              {channel.name}
-            </button>
+              <button
+                onClick={() => handleChannelSelect(channel.id)}
+                className={`flex-1 text-left px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center ${
+                  activeChannelId === channel.id ? 'bg-gray-100 dark:bg-gray-700 font-medium' : ''
+                }`}
+              >
+                <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
+                {channel.name}
+              </button>
+              {/* 「All」チャンネル以外は削除ボタンを表示 */}
+              {channel.id !== 'all' && (
+                <button
+                  onClick={(e) => handleDeleteChannel(channel.id, e)}
+                  className="p-1 text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity"
+                  aria-label={`${channel.name}チャンネルを削除`}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              )}
+            </div>
           ))}
         </div>
       </div>

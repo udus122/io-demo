@@ -14,6 +14,7 @@ interface UIContextType {
   setSelectedTag: (tag: string | null) => void;
   setActiveThreadId: (threadId: string | null) => void;
   addChannel: (name: string) => void;
+  deleteChannel: (channelId: string) => boolean;
   setActiveChannelId: (channelId: string) => void;
 }
 
@@ -92,6 +93,23 @@ export const UIProvider: React.FC<UIProviderProps> = ({ children }) => {
     return newChannel.id;
   };
 
+  // チャンネルを削除
+  const deleteChannel = (channelId: string): boolean => {
+    // 「All」チャンネルは削除できない
+    if (channelId === 'all') {
+      return false;
+    }
+
+    // 削除対象のチャンネルがアクティブな場合は「All」チャンネルをアクティブにする
+    if (channelId === activeChannelId) {
+      setActiveChannelId('all');
+    }
+
+    // チャンネルを削除
+    setChannels(prevChannels => prevChannels.filter(channel => channel.id !== channelId));
+    return true;
+  };
+
   return (
     <UIContext.Provider
       value={{
@@ -106,6 +124,7 @@ export const UIProvider: React.FC<UIProviderProps> = ({ children }) => {
         setSelectedTag,
         setActiveThreadId,
         addChannel,
+        deleteChannel,
         setActiveChannelId,
       }}
     >

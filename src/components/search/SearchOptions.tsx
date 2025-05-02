@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useSearch } from '@/contexts/SearchContext';
 import { useMessages } from '@/contexts/MessageContext';
+import { useUI } from '@/contexts/UIContext';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
 
@@ -11,6 +12,7 @@ interface SearchOptionsProps {
 const SearchOptions: React.FC<SearchOptionsProps> = ({ isVisible }) => {
   const { searchOptions, setSearchOptions, performSearch } = useSearch();
   const { getAllTags } = useMessages();
+  const { activeFilter, setActiveFilter } = useUI();
   const allTags = getAllTags();
   
   // 日付文字列を管理するためのローカル状態
@@ -66,6 +68,11 @@ const SearchOptions: React.FC<SearchOptionsProps> = ({ isVisible }) => {
     }
   };
 
+  // フィルター変更ハンドラ
+  const handleFilterChange = (filter: string) => {
+    setActiveFilter(filter);
+  };
+
   // 検索オプション適用ハンドラ
   const handleApplyOptions = () => {
     performSearch();
@@ -80,6 +87,72 @@ const SearchOptions: React.FC<SearchOptionsProps> = ({ isVisible }) => {
       <h3 className="font-medium mb-3">検索オプション</h3>
       
       <div className="space-y-4">
+        {/* フィルターオプション */}
+        <div>
+          <h4 className="text-sm font-medium mb-2">フィルター</h4>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+            <button 
+              onClick={() => handleFilterChange('all')}
+              className={`px-3 py-2 text-sm rounded-md ${
+                activeFilter === 'all' 
+                  ? 'bg-primary text-white' 
+                  : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600'
+              }`}
+            >
+              すべて
+            </button>
+            <button 
+              onClick={() => handleFilterChange('unarchived')}
+              className={`px-3 py-2 text-sm rounded-md ${
+                activeFilter === 'unarchived' 
+                  ? 'bg-primary text-white' 
+                  : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600'
+              }`}
+            >
+              アーカイブ以外
+            </button>
+            <button 
+              onClick={() => handleFilterChange('archived')}
+              className={`px-3 py-2 text-sm rounded-md ${
+                activeFilter === 'archived' 
+                  ? 'bg-primary text-white' 
+                  : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600'
+              }`}
+            >
+              アーカイブのみ
+            </button>
+            <button 
+              onClick={() => handleFilterChange('tasks')}
+              className={`px-3 py-2 text-sm rounded-md ${
+                activeFilter === 'tasks' 
+                  ? 'bg-primary text-white' 
+                  : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600'
+              }`}
+            >
+              タスクのみ
+            </button>
+            <button 
+              onClick={() => handleFilterChange('completed-tasks')}
+              className={`px-3 py-2 text-sm rounded-md ${
+                activeFilter === 'completed-tasks' 
+                  ? 'bg-primary text-white' 
+                  : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600'
+              }`}
+            >
+              完了タスク
+            </button>
+            <button 
+              onClick={() => handleFilterChange('uncompleted-tasks')}
+              className={`px-3 py-2 text-sm rounded-md ${
+                activeFilter === 'uncompleted-tasks' 
+                  ? 'bg-primary text-white' 
+                  : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600'
+              }`}
+            >
+              未完了タスク
+            </button>
+          </div>
+        </div>
         {/* 検索対象オプション */}
         <div>
           <h4 className="text-sm font-medium mb-2">検索対象</h4>

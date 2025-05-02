@@ -9,7 +9,7 @@ interface MessageInputProps {
 // アイコンコンポーネント
 const SendIcon = ({ className = "h-6 w-6" }: { className?: string }) => (
   <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21.5 12L4.5 4.5l2 7.5-2 7.5 17-7.5z M4.5 12h5" />
   </svg>
 );
 

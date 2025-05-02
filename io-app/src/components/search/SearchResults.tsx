@@ -13,6 +13,7 @@ interface SearchResultItemProps {
   onTagClick: (tag: string) => void;
   onArchiveToggle: (id: string) => void;
   onTaskToggle?: (id: string) => void;
+  onTaskStatusToggle?: (id: string) => void;
 }
 
 const SearchResultItem: React.FC<SearchResultItemProps> = ({
@@ -23,6 +24,7 @@ const SearchResultItem: React.FC<SearchResultItemProps> = ({
   onTagClick,
   onArchiveToggle,
   onTaskToggle,
+  onTaskStatusToggle,
 }) => {
   return (
     <div className={`p-4 border-b border-gray-200 dark:border-gray-700 ${message.isArchived ? 'bg-gray-50 dark:bg-gray-800/50' : 'bg-white dark:bg-gray-800'}`}>
@@ -44,6 +46,14 @@ const SearchResultItem: React.FC<SearchResultItemProps> = ({
           >
             {message.isArchived ? 'アーカイブ解除' : 'アーカイブ'}
           </button>
+          {onTaskStatusToggle && (
+            <button
+              onClick={() => onTaskStatusToggle(message.id)}
+              className="text-xs text-gray-500 hover:text-primary"
+            >
+              {message.isTask ? 'タスク解除' : 'タスク化'}
+            </button>
+          )}
         </div>
       </div>
 
@@ -103,6 +113,7 @@ interface SearchResultsProps {
   onTagClick: (tag: string) => void;
   onArchiveToggle: (id: string) => void;
   onTaskToggle?: (id: string) => void;
+  onTaskStatusToggle?: (id: string) => void;
 }
 
 const SearchResults: React.FC<SearchResultsProps> = ({
@@ -110,6 +121,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
   onTagClick,
   onArchiveToggle,
   onTaskToggle,
+  onTaskStatusToggle,
 }) => {
   const { searchResults, searchTerm, isSearchActive, searchOptions } = useSearch();
 
@@ -141,6 +153,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
             onTagClick={onTagClick}
             onArchiveToggle={onArchiveToggle}
             onTaskToggle={onTaskToggle}
+            onTaskStatusToggle={onTaskStatusToggle}
           />
         ))
       ) : (

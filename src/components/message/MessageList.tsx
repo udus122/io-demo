@@ -51,7 +51,7 @@ const MessageList: React.FC<MessageListProps> = ({
   }, [lastAddedMessageId, rootMessages.length]);
 
   return (
-    <div className="flex-1 overflow-y-auto flex flex-col justify-end">
+    <div className="flex-1 overflow-y-auto flex flex-col">
       {rootMessages.length > 0 ? (
         rootMessages.map(message => (
           <div 

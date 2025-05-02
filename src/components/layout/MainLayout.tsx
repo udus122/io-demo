@@ -65,7 +65,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, sidebar }) => {
         </div>
         
         {/* サイドバーコンテンツ */}
-        <div className={`flex-1 overflow-y-auto ${isSidebarVisible ? '' : 'hidden md:hidden'}`}>
+        <div className={`flex-1 overflow-y-auto ${isSidebarVisible ? '' : 'md:hidden'}`}>
           {sidebar}
         </div>
       </div>

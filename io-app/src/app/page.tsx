@@ -114,47 +114,56 @@ const MainContent = () => {
             />
           ) : (
             <>
-              {/* メッセージリスト - モバイルではスレッド表示時に非表示 */}
+              {/* メッセージリストとメッセージ入力欄のコンテナ */}
               <div className={`
-                flex-1 overflow-auto
-                ${activeThreadId ? 'hidden md:block md:w-1/2' : 'w-full'}
+                flex flex-col
+                ${activeThreadId ? 'w-full md:w-1/2' : 'w-full'}
                 transition-all duration-300
               `}>
-                <MessageList
-                  messages={messagesWithThreadInfo}
-                  onReply={handleOpenThread}
-                  onTagClick={handleTagClick}
-                  onArchiveToggle={toggleArchive}
-                  lastAddedMessageId={lastAddedMessageId}
-                />
-              </div>
-
-              {/* スレッドエリア - 検索中は非表示 */}
-              {activeThreadId && (
-                <div className="w-full md:w-1/2 flex-1 overflow-auto">
-                  <ThreadView
-                    parentMessage={activeThreadParent}
-                    replies={activeThreadReplies}
-                    onSendReply={handleSendReply}
+                {/* メッセージリスト - モバイルではスレッド表示時に非表示 */}
+                <div className={`
+                  flex-1 overflow-auto
+                  ${activeThreadId ? 'hidden md:block' : ''}
+                `}>
+                  <MessageList
+                    messages={messagesWithThreadInfo}
+                    onReply={handleOpenThread}
                     onTagClick={handleTagClick}
                     onArchiveToggle={toggleArchive}
-                    onClose={handleCloseThread}
+                    lastAddedMessageId={lastAddedMessageId}
                   />
                 </div>
-              )}
-              
-              {/* メッセージ入力欄 - 常に表示 */}
-              <div className="mt-auto">
-                {activeThreadId ? (
-                  <MessageInput 
-                    onSendMessage={handleSendReply} 
-                    replyToId={activeThreadId}
-                    placeholder="返信を入力..."
-                  />
-                ) : (
+
+                {/* メッセージ入力欄 - スレッド非表示時または常にデスクトップで表示、モバイルではsticky */}
+                <div className={`${activeThreadId ? 'hidden md:block' : ''} sticky bottom-0 z-10`}>
                   <MessageInput onSendMessage={handleSendMessage} />
-                )}
+                </div>
               </div>
+
+              {/* スレッドエリアとスレッド用入力欄のコンテナ */}
+              {activeThreadId && (
+                <div className="w-full md:w-1/2 flex flex-col">
+                  <div className="flex-1 overflow-auto">
+                    <ThreadView
+                      parentMessage={activeThreadParent}
+                      replies={activeThreadReplies}
+                      onSendReply={handleSendReply}
+                      onTagClick={handleTagClick}
+                      onArchiveToggle={toggleArchive}
+                      onClose={handleCloseThread}
+                    />
+                  </div>
+                  
+                  {/* スレッド用メッセージ入力欄 - モバイルとデスクトップの両方で表示、モバイルではsticky */}
+                  <div className="md:block sticky bottom-0 z-10">
+                    <MessageInput 
+                      onSendMessage={handleSendReply} 
+                      replyToId={activeThreadId}
+                      placeholder="返信を入力..."
+                    />
+                  </div>
+                </div>
+              )}
             </>
           )}
         </div>

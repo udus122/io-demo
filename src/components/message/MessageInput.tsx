@@ -6,6 +6,13 @@ interface MessageInputProps {
   placeholder?: string;
 }
 
+// 送信ボタン用の紙飛行機アイコン
+const SendIcon = ({ className = "h-6 w-6" }: { className?: string }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+  </svg>
+);
+
 const MessageInput: React.FC<MessageInputProps> = ({ 
   onSendMessage, 
   replyToId,
@@ -118,9 +125,9 @@ const MessageInput: React.FC<MessageInputProps> = ({
           <button
             onClick={handleSubmit}
             disabled={!message.trim()}
-            className="px-4 py-1 bg-primary text-white rounded-md disabled:opacity-50 text-base"
+            className="p-2 bg-primary text-white rounded-md disabled:opacity-50 flex items-center justify-center"
           >
-            送信
+            <SendIcon className="h-5 w-5" />
           </button>
         </div>
       </div>
@@ -131,9 +138,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
         disabled={!message.trim()}
         className="md:hidden fixed bottom-4 right-4 w-12 h-12 flex items-center justify-center bg-primary text-white rounded-full shadow-lg disabled:opacity-50 z-10"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-        </svg>
+        <SendIcon />
       </button>
     </div>
   );

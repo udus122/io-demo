@@ -16,12 +16,13 @@ interface MessageItemProps {
   isCompleted?: boolean;
   hasThread: boolean;
   replyCount?: number;
+  images?: string[];
   onReply: (id: string) => void;
   onTagClick: (tag: string) => void;
   onArchiveToggle: (id: string) => void;
   onTaskToggle?: (id: string) => void;
   onTaskStatusToggle?: (id: string) => void;
-  onEdit?: (id: string, newContent: string) => void;
+  onEdit?: (id: string, newContent: string, images?: string[]) => void;
 }
 
 const MessageItem: React.FC<MessageItemProps> = ({
@@ -34,6 +35,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
   isCompleted = false,
   hasThread,
   replyCount,
+  images,
   onReply,
   onTagClick,
   onArchiveToggle,
@@ -45,7 +47,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
   const [editContent, setEditContent] = useState(content);
   const [isHovered, setIsHovered] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  
+
   // テキストエリアの高さを内容に合わせて自動調整する関数
   const adjustTextareaHeight = () => {
     const textarea = textareaRef.current;
@@ -58,45 +60,45 @@ const MessageItem: React.FC<MessageItemProps> = ({
       textarea.style.height = `${newHeight}px`;
     }
   };
-  
+
   // メッセージが変更されたときに高さを調整
   useEffect(() => {
     if (isEditing) {
       adjustTextareaHeight();
     }
   }, [editContent, isEditing]);
-  
+
   // 編集を開始
   const handleEditStart = () => {
     setEditContent(isTask ? `[]${content}` : content);
     setIsEditing(true);
   };
-  
+
   // 編集を保存
   const handleSave = () => {
     if (onEdit && editContent.trim()) {
-      onEdit(id, editContent);
+      onEdit(id, editContent, images);
     }
     setIsEditing(false);
   };
-  
+
   // 編集をキャンセル
   const handleCancel = () => {
     setIsEditing(false);
     setEditContent(content);
   };
-  
+
   // フォーマットタイプの定義
-  type FormatType = 
-    | 'bold' 
-    | 'italic' 
-    | 'strikethrough' 
-    | 'underline' 
-    | 'bulletList' 
-    | 'numberList' 
-    | 'indent' 
+  type FormatType =
+    | 'bold'
+    | 'italic'
+    | 'strikethrough'
+    | 'underline'
+    | 'bulletList'
+    | 'numberList'
+    | 'indent'
     | 'outdent';
-  
+
   // テキストにフォーマットを適用する関数
   const applyFormat = (formatType: FormatType) => {
     const textarea = textareaRef.current;
@@ -106,36 +108,36 @@ const MessageItem: React.FC<MessageItemProps> = ({
     const selectedText = value.substring(selectionStart, selectionEnd);
     let formattedText = '';
     let newCursorPos = selectionEnd;
-    
+
     // 現在行の開始位置と終了位置を取得（インデント/アウトデント用）
     const currentLineStart = value.lastIndexOf('\n', selectionStart - 1) + 1;
     const currentLineEnd = value.indexOf('\n', selectionStart);
     const lineEnd = currentLineEnd === -1 ? value.length : currentLineEnd;
     const currentLine = value.substring(currentLineStart, lineEnd);
-    
+
     switch (formatType) {
       case 'bold':
         formattedText = `**${selectedText}**`;
-        newCursorPos = selectionStart === selectionEnd 
+        newCursorPos = selectionStart === selectionEnd
           ? selectionStart + 2 // カーソルのみの場合は**の間にカーソルを置く
           : selectionEnd + 4; // テキスト選択時は選択範囲の後ろにカーソルを置く
         break;
       case 'italic':
         formattedText = `*${selectedText}*`;
-        newCursorPos = selectionStart === selectionEnd 
-          ? selectionStart + 1 
+        newCursorPos = selectionStart === selectionEnd
+          ? selectionStart + 1
           : selectionEnd + 2;
         break;
       case 'strikethrough':
         formattedText = `~~${selectedText}~~`;
-        newCursorPos = selectionStart === selectionEnd 
-          ? selectionStart + 2 
+        newCursorPos = selectionStart === selectionEnd
+          ? selectionStart + 2
           : selectionEnd + 4;
         break;
       case 'underline':
         formattedText = `<u>${selectedText}</u>`;
-        newCursorPos = selectionStart === selectionEnd 
-          ? selectionStart + 3 
+        newCursorPos = selectionStart === selectionEnd
+          ? selectionStart + 3
           : selectionEnd + 7;
         break;
       case 'bulletList':
@@ -146,7 +148,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
             // 既に箇条書きの場合は削除、そうでなければ追加
             const bulletPattern = /^(\s*)- (.*)$/;
             const match = line.match(bulletPattern);
-            
+
             if (match) {
               // 箇条書きを削除
               return `${match[1]}${match[2]}`;
@@ -164,12 +166,12 @@ const MessageItem: React.FC<MessageItemProps> = ({
           const numberPattern = /^(\s*)(\d+)\. (.*)$/;
           const bulletMatch = currentLine.match(bulletPattern);
           const numberMatch = currentLine.match(numberPattern);
-          
+
           // 先頭のスペースを検出
           const leadingSpacePattern = /^(\s*)(.*)/;
           const spaceMatch = currentLine.match(leadingSpacePattern);
           const leadingSpace = spaceMatch ? spaceMatch[1] : '';
-          
+
           if (bulletMatch) {
             // 箇条書きを削除
             const newLine = `${bulletMatch[1]}${bulletMatch[2]}`;
@@ -195,8 +197,8 @@ const MessageItem: React.FC<MessageItemProps> = ({
           } else {
             // 箇条書きを追加（先頭のスペースを維持）
             formattedText = `${leadingSpace}- `;
-            const newValue = value.substring(0, currentLineStart) + formattedText + 
-                            value.substring(currentLineStart + leadingSpace.length);
+            const newValue = value.substring(0, currentLineStart) + formattedText +
+              value.substring(currentLineStart + leadingSpace.length);
             setEditContent(newValue);
             // カーソル位置を調整（元の位置に対してリストマークの長さ分オフセット）
             const newPosition = selectionStart + 2; // 「- 」の長さは2
@@ -215,7 +217,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
             // 既に番号付きリストの場合は削除、そうでなければ追加
             const numberPattern = /^(\s*)(\d+)\. (.*)$/;
             const match = line.match(numberPattern);
-            
+
             if (match) {
               // 番号付きリストを削除
               return `${match[1]}${match[3]}`;
@@ -233,12 +235,12 @@ const MessageItem: React.FC<MessageItemProps> = ({
           const numberPattern = /^(\s*)(\d+)\. (.*)$/;
           const bulletMatch = currentLine.match(bulletPattern);
           const numberMatch = currentLine.match(numberPattern);
-          
+
           // 先頭のスペースを検出
           const leadingSpacePattern = /^(\s*)(.*)/;
           const spaceMatch = currentLine.match(leadingSpacePattern);
           const leadingSpace = spaceMatch ? spaceMatch[1] : '';
-          
+
           if (numberMatch) {
             // 番号付きリストを削除
             const newLine = `${numberMatch[1]}${numberMatch[3]}`;
@@ -264,8 +266,8 @@ const MessageItem: React.FC<MessageItemProps> = ({
           } else {
             // 番号付きリストを追加（先頭のスペースを維持）
             formattedText = `${leadingSpace}1. `;
-            const newValue = value.substring(0, currentLineStart) + formattedText + 
-                            value.substring(currentLineStart + leadingSpace.length);
+            const newValue = value.substring(0, currentLineStart) + formattedText +
+              value.substring(currentLineStart + leadingSpace.length);
             setEditContent(newValue);
             // カーソル位置を調整（元の位置に対してリストマークの長さ分オフセット）
             const newPosition = selectionStart + 3; // 「1. 」の長さは3
@@ -280,13 +282,13 @@ const MessageItem: React.FC<MessageItemProps> = ({
         // 箇条書きの行にインデントを適用
         const listPattern = /^(\s*)(-|\*|\+|(\d+)\.) (.*)$/;
         const match = currentLine.match(listPattern);
-        
+
         if (match) {
           // インデント（スペース2つを追加）
           const newLine = '  ' + currentLine;
           const newValue = value.substring(0, currentLineStart) + newLine + value.substring(lineEnd);
           setEditContent(newValue);
-          
+
           // カーソル位置を調整
           const newPosition = selectionStart + 2;
           setTimeout(() => {
@@ -299,7 +301,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
         // 箇条書きの行からインデントを削除
         const outdentPattern = /^(\s*)(-|\*|\+|(\d+)\.) (.*)$/;
         const outdentMatch = currentLine.match(outdentPattern);
-        
+
         if (outdentMatch) {
           const [, indent] = outdentMatch;
           if (indent.length >= 2) {
@@ -307,7 +309,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
             const newLine = currentLine.substring(2);
             const newValue = value.substring(0, currentLineStart) + newLine + value.substring(lineEnd);
             setEditContent(newValue);
-            
+
             // カーソル位置を調整
             const newPosition = Math.max(selectionStart - 2, currentLineStart);
             setTimeout(() => {
@@ -320,25 +322,25 @@ const MessageItem: React.FC<MessageItemProps> = ({
       default:
         return;
     }
-    
+
     // テキストを置き換え
     const newValue = value.substring(0, selectionStart) + formattedText + value.substring(selectionEnd);
     setEditContent(newValue);
-    
+
     // カーソル位置を更新
     setTimeout(() => {
       textarea.focus();
       textarea.setSelectionRange(newCursorPos, newCursorPos);
     }, 0);
   };
-  
+
   // フォーマットボタンをクリックしたときの処理
   const handleFormatClick = (formatType: FormatType, e: MouseEvent<HTMLButtonElement>) => {
     // デフォルトのボタンクリック動作を防止（フォーカスが外れるのを防ぐ）
     e.preventDefault();
-    
+
     applyFormat(formatType);
-    
+
     // フォーマット適用後、テキストエリアにフォーカスを戻す
     setTimeout(() => {
       if (textareaRef.current) {
@@ -346,7 +348,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
       }
     }, 0);
   };
-  
+
   // キーボードイベントハンドラ
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     // ⌘+Enter / Ctrl+Enterで保存
@@ -355,35 +357,35 @@ const MessageItem: React.FC<MessageItemProps> = ({
       handleSave();
       return;
     }
-    
+
     // Escapeで編集キャンセル
     if (e.key === 'Escape') {
       e.preventDefault();
       handleCancel();
       return;
     }
-    
+
     // ⌘+B / Ctrl+B で太字
     if (e.key === 'b' && (e.metaKey || e.ctrlKey)) {
       e.preventDefault();
       applyFormat('bold');
       return;
     }
-    
+
     // ⌘+I / Ctrl+I で斜体
     if (e.key === 'i' && (e.metaKey || e.ctrlKey)) {
       e.preventDefault();
       applyFormat('italic');
       return;
     }
-    
+
     // ⌘+U / Ctrl+U で下線
     if (e.key === 'u' && (e.metaKey || e.ctrlKey)) {
       e.preventDefault();
       applyFormat('underline');
       return;
     }
-    
+
     // ⌘+X / Ctrl+X で取り消し線（選択範囲がある場合のみ）
     if (e.key === 'x' && (e.metaKey || e.ctrlKey) && e.currentTarget.selectionStart !== e.currentTarget.selectionEnd) {
       e.preventDefault();
@@ -392,10 +394,10 @@ const MessageItem: React.FC<MessageItemProps> = ({
     }
   };
   return (
-    <div 
+    <div
       className={`p-3 md:p-4 border-b transition-all duration-200 ease-in-out
-        ${isHovered 
-          ? 'bg-gray-50 dark:bg-gray-700/50 border-gray-300 dark:border-gray-600 shadow-sm' 
+        ${isHovered
+          ? 'bg-gray-50 dark:bg-gray-700/50 border-gray-300 dark:border-gray-600 shadow-sm'
           : `${isArchived ? 'bg-gray-50 dark:bg-gray-800/50' : 'bg-white dark:bg-gray-800'} border-gray-200 dark:border-gray-700`
         }
       `}
@@ -502,14 +504,31 @@ const MessageItem: React.FC<MessageItemProps> = ({
             </button>
           </div>
         )}
-        
+
         {/* メッセージコンテンツ（編集モードでない場合） */}
         {!isEditing && (
-          <div className={`prose prose-sm dark:prose-invert max-w-none ${isTask && isCompleted ? 'line-through text-gray-500 dark:text-gray-400' : ''}`}>
-            <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]} rehypePlugins={[rehypeRaw]}>{content}</ReactMarkdown>
+          <div className="flex flex-col w-full">
+            <div className={`prose prose-sm dark:prose-invert max-w-none ${isTask && isCompleted ? 'line-through text-gray-500 dark:text-gray-400' : ''}`}>
+              <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]} rehypePlugins={[rehypeRaw]}>{content}</ReactMarkdown>
+            </div>
+
+            {/* 画像表示 */}
+            {images && images.length > 0 && (
+              <div className="mt-3 flex flex-wrap gap-2">
+                {images.map((image, index) => (
+                  <img
+                    key={index}
+                    src={image}
+                    alt={`添付画像 ${index + 1}`}
+                    className="max-w-full max-h-64 rounded border border-gray-200 dark:border-gray-700"
+                    loading="lazy"
+                  />
+                ))}
+              </div>
+            )}
           </div>
         )}
-        
+
         {/* 編集フォーム（編集モードの場合） */}
         {isEditing && (
           <div className="w-full">
@@ -607,7 +626,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
                 </svg>
               </button>
             </div>
-            
+
             <textarea
               ref={textareaRef}
               value={editContent}
@@ -636,7 +655,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
             #{tag}
           </button>
         ))}
-        
+
         {hasThread && (
           <div className="ml-auto text-xs text-primary cursor-pointer" onClick={() => onReply(id)}>
             スレッドを表示 {replyCount && `(${replyCount})`}

@@ -35,14 +35,14 @@ const MessageList: React.FC<MessageListProps> = ({
       if (lastAddedMessageId) {
         messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
         setHighlightedMessageId(lastAddedMessageId);
-        
+
         // ハイライト効果を3秒後に消す
         const timer = setTimeout(() => {
           setHighlightedMessageId(null);
         }, 3000);
-        
+
         return () => clearTimeout(timer);
-      } 
+      }
       // コンポーネントマウント時（アプリ起動時）
       else if (rootMessages.length > 0) {
         messagesEndRef.current.scrollIntoView({ behavior: 'auto' });
@@ -54,7 +54,7 @@ const MessageList: React.FC<MessageListProps> = ({
     <div className="flex-1 overflow-y-auto flex flex-col">
       {rootMessages.length > 0 ? (
         rootMessages.map(message => (
-          <div 
+          <div
             key={message.id}
             className={`transition-colors duration-1000 ${highlightedMessageId === message.id ? 'bg-primary/10' : ''}`}
           >
@@ -68,6 +68,7 @@ const MessageList: React.FC<MessageListProps> = ({
               isCompleted={message.isCompleted}
               hasThread={message.hasReplies}
               replyCount={message.replyCount}
+              images={message.images}
               onReply={onReply}
               onTagClick={onTagClick}
               onArchiveToggle={onArchiveToggle}

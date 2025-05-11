@@ -27,10 +27,10 @@ export const ThreadHeader: React.FC<{
           className="md:hidden mr-2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 flex items-center"
           aria-label="戻る"
         >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 md:mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            <span className="hidden md:inline">戻る</span>
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 md:mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          <span className="hidden md:inline">戻る</span>
         </button>
         <h2 className="font-semibold">スレッド</h2>
       </div>
@@ -69,12 +69,12 @@ const ThreadView: React.FC<ThreadViewProps> = ({
       if (lastAddedMessageId && replies.some(reply => reply.id === lastAddedMessageId)) {
         repliesEndRef.current.scrollIntoView({ behavior: 'smooth' });
         setHighlightedMessageId(lastAddedMessageId);
-        
+
         // ハイライト効果を3秒後に消す
         const timer = setTimeout(() => {
           setHighlightedMessageId(null);
         }, 3000);
-        
+
         return () => clearTimeout(timer);
       }
       // コンポーネントマウント時（スレッド表示時）
@@ -92,29 +92,30 @@ const ThreadView: React.FC<ThreadViewProps> = ({
     <div className="flex flex-col h-full border-l border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
       {/* 親メッセージ */}
       <div className="border-b border-gray-200 dark:border-gray-700">
-            <MessageItem
-              id={parentMessage.id}
-              content={parentMessage.content}
-              createdAt={parentMessage.createdAt}
-              tags={parentMessage.tags}
-              isArchived={parentMessage.isArchived}
-              isTask={parentMessage.isTask}
-              isCompleted={parentMessage.isCompleted}
-              hasThread={false}
-              onReply={() => {}}
-              onTagClick={onTagClick}
-              onArchiveToggle={onArchiveToggle}
-              onTaskToggle={onTaskToggle}
-              onTaskStatusToggle={onTaskStatusToggle}
-              onEdit={editMessage}
-            />
+        <MessageItem
+          id={parentMessage.id}
+          content={parentMessage.content}
+          createdAt={parentMessage.createdAt}
+          tags={parentMessage.tags}
+          isArchived={parentMessage.isArchived}
+          isTask={parentMessage.isTask}
+          isCompleted={parentMessage.isCompleted}
+          hasThread={false}
+          images={parentMessage.images}
+          onReply={() => { }}
+          onTagClick={onTagClick}
+          onArchiveToggle={onArchiveToggle}
+          onTaskToggle={onTaskToggle}
+          onTaskStatusToggle={onTaskStatusToggle}
+          onEdit={editMessage}
+        />
       </div>
 
       {/* 返信リスト */}
       <div className="flex-1 overflow-y-auto pb-4">
         {replies.length > 0 ? (
           [...replies].reverse().map(reply => (
-            <div 
+            <div
               key={reply.id}
               className={`transition-colors duration-1000 ${highlightedMessageId === reply.id ? 'bg-primary/10' : ''}`}
             >
@@ -127,7 +128,8 @@ const ThreadView: React.FC<ThreadViewProps> = ({
                 isTask={reply.isTask}
                 isCompleted={reply.isCompleted}
                 hasThread={false}
-                onReply={() => {}}
+                images={reply.images}
+                onReply={() => { }}
                 onTagClick={onTagClick}
                 onArchiveToggle={onArchiveToggle}
                 onTaskToggle={onTaskToggle}

@@ -17,39 +17,39 @@ import { SearchProvider, useSearch } from '@/contexts/SearchContext';
 const MainContent = () => {
   const [showSearchOptions, setShowSearchOptions] = useState(false);
   const { isSearchActive } = useSearch();
-  const { 
-    messages, 
+  const {
+    messages,
     lastAddedMessageId,
-    addMessage, 
-    toggleArchive, 
+    addMessage,
+    toggleArchive,
     toggleTaskCompletion,
     toggleTaskStatus,
-    getAllTags, 
-    getThreadReplies, 
-    getMessageById, 
-    filterMessages 
+    getAllTags,
+    getThreadReplies,
+    getMessageById,
+    filterMessages
   } = useMessages();
-  
-  const { 
+
+  const {
     archiveFilter,
-    taskFilter, 
-    selectedTag, 
-    activeThreadId, 
+    taskFilter,
+    selectedTag,
+    activeThreadId,
     setArchiveFilter,
-    setTaskFilter, 
-    setSelectedTag, 
-    setActiveThreadId 
+    setTaskFilter,
+    setSelectedTag,
+    setActiveThreadId
   } = useUI();
 
   // メッセージの送信
-  const handleSendMessage = (content: string) => {
-    addMessage(content);
+  const handleSendMessage = (content: string, images?: string[]) => {
+    addMessage(content, images, null);
   };
 
   // スレッドへの返信
-  const handleSendReply = (content: string) => {
+  const handleSendReply = (content: string, images?: string[]) => {
     if (activeThreadId) {
-      addMessage(content, activeThreadId);
+      addMessage(content, images, activeThreadId);
     }
   };
 
@@ -126,20 +126,20 @@ const MainContent = () => {
       <div className="flex flex-col h-full">
         {/* 検索バー */}
         <SearchBar onToggleOptions={toggleSearchOptions} />
-        
+
         {/* フィルターバー - 常に表示 */}
         <FilterBar />
-        
+
         {/* 検索オプション */}
         <SearchOptions isVisible={showSearchOptions} />
-        
+
         {/* モバイル表示時のスレッドヘッダー - アクティブなスレッドがある場合のみ表示 */}
         {activeThreadId && (
           <div className="md:hidden">
             <ThreadHeader onClose={handleCloseThread} />
           </div>
         )}
-        
+
         <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
           {/* 検索結果またはメッセージリスト */}
           {isSearchActive ? (
@@ -187,7 +187,7 @@ const MainContent = () => {
                   <div className="hidden md:block">
                     <ThreadHeader onClose={handleCloseThread} />
                   </div>
-                  
+
                   {/* スレッド内容 - スクロール可能エリア */}
                   <div className="flex-1 overflow-y-auto md:px-4">
                     <ThreadView
@@ -201,11 +201,11 @@ const MainContent = () => {
                       onClose={handleCloseThread}
                     />
                   </div>
-                  
+
                   {/* スレッド用メッセージ入力欄 - 画面下部に固定 */}
                   <div className="mt-auto border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-                    <MessageInput 
-                      onSendMessage={handleSendReply} 
+                    <MessageInput
+                      onSendMessage={handleSendReply}
                       replyToId={activeThreadId}
                       placeholder="返信を入力..."
                       taskFilter={taskFilter}

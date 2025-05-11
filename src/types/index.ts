@@ -14,6 +14,7 @@ export interface Message {
   isTask: boolean;
   isCompleted: boolean;
   channelId: string;
+  images?: string[]; // Base64エンコードされた画像の配列
 }
 
 export interface MessageWithThreadInfo extends Message {

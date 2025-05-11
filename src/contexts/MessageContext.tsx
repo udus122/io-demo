@@ -6,8 +6,8 @@ import { useUI } from './UIContext';
 interface MessageContextType {
   messages: Message[];
   lastAddedMessageId: string | null;
-  addMessage: (content: string, parentId?: string | null) => void;
-  editMessage: (messageId: string, newContent: string) => void;
+  addMessage: (content: string, images?: string[], parentId?: string | null) => void;
+  editMessage: (messageId: string, newContent: string, images?: string[]) => void;
   addTagToMessage: (messageId: string, tag: string) => void;
   toggleArchive: (messageId: string) => void;
   toggleTaskCompletion: (messageId: string) => void;
@@ -36,7 +36,7 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
   const { activeChannelId } = useUI();
   const [messages, setMessages] = useState<Message[]>([]);
   const [lastAddedMessageId, setLastAddedMessageId] = useState<string | null>(null);
-  
+
   // クライアントサイドでのみローカルストレージから状態を読み込む
   useEffect(() => {
     // ローカルストレージから状態を読み込むヘルパー関数
@@ -52,7 +52,7 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
       }
       return defaultValue;
     };
-    
+
     // 最後に追加されたメッセージIDを読み込む
     setLastAddedMessageId(getStoredState('io-lastAddedMessageId', null));
   }, []);
@@ -79,14 +79,14 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
   useEffect(() => {
     localStorage.setItem('io-messages', JSON.stringify(messages));
   }, [messages]);
-  
+
   // 最後に追加されたメッセージIDが変更されたらLocalStorageに保存
   useEffect(() => {
     localStorage.setItem('io-lastAddedMessageId', JSON.stringify(lastAddedMessageId));
   }, [lastAddedMessageId]);
 
   // 新しいメッセージを追加
-  const addMessage = (content: string, parentId: string | null = null) => {
+  const addMessage = (content: string, images: string[] = [], parentId: string | null = null) => {
     // コンテンツからタグを抽出（日本語対応）
     const tagRegex = /#([^\s#]+)/g;
     const tags: string[] = [];
@@ -101,10 +101,10 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
     // タスクの完了状態を判定
     const isCompleted = trimmedContent.startsWith('[x]');
     // タスクの場合は[]または[x]を除去したコンテンツを使用
-    const cleanContent = isTask 
-      ? trimmedContent.startsWith('[x]') 
-        ? content.replace(/^\[x\]/, '').trim() 
-        : content.replace(/^\[\]/, '').trim() 
+    const cleanContent = isTask
+      ? trimmedContent.startsWith('[x]')
+        ? content.replace(/^\[x\]/, '').trim()
+        : content.replace(/^\[\]/, '').trim()
       : content;
 
     const newMessageId = uuidv4();
@@ -117,11 +117,12 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
       parentId,
       isTask,
       isCompleted: isCompleted,
-      channelId: activeChannelId
+      channelId: activeChannelId,
+      images: images.length > 0 ? images : undefined
     };
 
     setMessages(prevMessages => [...prevMessages, newMessage]);
-    
+
     // 常に最後に追加されたメッセージIDを更新（親メッセージでもスレッド返信でも）
     setLastAddedMessageId(newMessageId);
   };
@@ -227,7 +228,7 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
   };
 
   // メッセージを編集
-  const editMessage = (messageId: string, newContent: string) => {
+  const editMessage = (messageId: string, newContent: string, images?: string[]) => {
     // コンテンツからタグを抽出（日本語対応）
     const tagRegex = /#([^\s#]+)/g;
     const tags: string[] = [];
@@ -242,16 +243,24 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
     // タスクの完了状態を判定
     const isCompleted = trimmedContent.startsWith('[x]');
     // タスクの場合は[]または[x]を除去したコンテンツを使用
-    const cleanContent = isTask 
-      ? trimmedContent.startsWith('[x]') 
-        ? newContent.replace(/^\[x\]/, '').trim() 
-        : newContent.replace(/^\[\]/, '').trim() 
+    const cleanContent = isTask
+      ? trimmedContent.startsWith('[x]')
+        ? newContent.replace(/^\[x\]/, '').trim()
+        : newContent.replace(/^\[\]/, '').trim()
       : newContent;
 
     setMessages(prevMessages =>
       prevMessages.map(msg =>
         msg.id === messageId
-          ? { ...msg, content: cleanContent, tags, isTask, isCompleted: isTask ? isCompleted : msg.isCompleted }
+          ? {
+            ...msg,
+            content: cleanContent,
+            tags,
+            isTask,
+            isCompleted: isTask ? isCompleted : msg.isCompleted,
+            // 画像が指定されている場合は更新、そうでなければ既存の画像を維持
+            images: images !== undefined ? (images.length > 0 ? images : undefined) : msg.images
+          }
           : msg
       )
     );

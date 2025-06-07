@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "IO - パーソナルメモアプリ",
-  description: "入力の手軽さと整理のしやすさを両立させるパーソナルメモアプリ",
+  title: "Flow - フロー情報のメモアプリ",
+  description: "入力の手軽さと整理のしやすさを両立させるフロー情報のメモアプリ",
 };
 
 export default function RootLayout({

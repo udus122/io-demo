@@ -43,7 +43,7 @@ export const UIProvider: React.FC<UIProviderProps> = ({ children }) => {
   const [channels, setChannels] = useState<Channel[]>([]);
   const [activeChannelId, setActiveChannelId] = useState<string>('');
   const [isSidebarVisible, setIsSidebarVisible] = useState<boolean>(true);
-  
+
   // クライアントサイドでのみローカルストレージから状態を読み込む
   useEffect(() => {
     // ローカルストレージから状態を読み込むヘルパー関数
@@ -59,7 +59,7 @@ export const UIProvider: React.FC<UIProviderProps> = ({ children }) => {
       }
       return defaultValue;
     };
-    
+
     // ローカルストレージから各状態を読み込む
     setArchiveFilter(getStoredState('io-archiveFilter', 'unarchived'));
     setTaskFilter(getStoredState('io-taskFilter', 'all'));
@@ -81,7 +81,7 @@ export const UIProvider: React.FC<UIProviderProps> = ({ children }) => {
           createdAt: new Date(channel.createdAt)
         }));
         setChannels(channelsWithDates);
-        
+
         // アクティブなチャンネルがない場合は最初のチャンネルを選択
         if (channelsWithDates.length > 0 && !activeChannelId) {
           setActiveChannelId(channelsWithDates[0].id);
@@ -93,7 +93,7 @@ export const UIProvider: React.FC<UIProviderProps> = ({ children }) => {
       // チャンネルがない場合は「All」チャンネルを作成
       const allChannel: Channel = {
         id: 'all', // 特別なID「all」を使用
-        name: 'All',
+        name: 'Home',
         createdAt: new Date()
       };
       setChannels([allChannel]);
@@ -112,7 +112,7 @@ export const UIProvider: React.FC<UIProviderProps> = ({ children }) => {
   const addChannel = (name: string) => {
     // 'all'は予約済みIDなので、別のIDを生成
     const newId = name.toLowerCase() === 'all' ? `channel-${uuidv4()}` : uuidv4();
-    
+
     const newChannel: Channel = {
       id: newId,
       name,

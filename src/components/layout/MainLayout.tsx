@@ -9,11 +9,11 @@ interface MainLayoutProps {
 const MainLayout: React.FC<MainLayoutProps> = ({ children, sidebar }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { channels, activeChannelId, isSidebarVisible, toggleSidebar } = useUI();
-  
+
   // アクティブなチャンネル名を取得
   const activeChannel = channels.find(channel => channel.id === activeChannelId);
-  const activeChannelName = activeChannel?.name || 'All';
-  
+  const activeChannelName = activeChannel?.name || 'Home';
+
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
       {/* サイドバー - モバイルではオフキャンバス、デスクトップでは表示/非表示を切り替え可能 */}
@@ -30,9 +30,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, sidebar }) => {
           flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700
           ${isSidebarVisible ? '' : 'justify-center'}
         `}>
-          <h1 className={`text-xl font-bold ${isSidebarVisible ? '' : 'mx-auto'}`}>IO</h1>
+          <h1 className={`text-xl font-bold ${isSidebarVisible ? '' : 'mx-auto'}`}>Flow</h1>
           {isSidebarVisible && (
-            <button 
+            <button
               onClick={toggleSidebar}
               className="hidden md:flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               aria-label="サイドバーを最小化"
@@ -43,7 +43,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, sidebar }) => {
             </button>
           )}
           {!isSidebarVisible && (
-            <button 
+            <button
               onClick={toggleSidebar}
               className="hidden md:flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors absolute top-16 left-4"
               aria-label="サイドバーを展開"
@@ -53,7 +53,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, sidebar }) => {
               </svg>
             </button>
           )}
-          <button 
+          <button
             onClick={() => setIsSidebarOpen(false)}
             className="md:hidden flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-500"
             aria-label="サイドバーを閉じる"
@@ -63,21 +63,21 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, sidebar }) => {
             </svg>
           </button>
         </div>
-        
+
         {/* サイドバーコンテンツ */}
         <div className={`flex-1 overflow-y-auto ${isSidebarVisible ? '' : 'md:hidden'}`}>
           {sidebar}
         </div>
       </div>
-      
+
       {/* オーバーレイ - モバイルでサイドバー表示時のみ表示（透明度を下げて背景を見えるようにする） */}
       {isSidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-20 z-20 md:hidden"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
-      
+
       {/* メインコンテンツエリア - サイドバーの表示/非表示に応じて幅を調整 */}
       <div className={`
         flex flex-col flex-1 overflow-hidden
@@ -86,7 +86,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, sidebar }) => {
       `}>
         {/* ヘッダー - モバイル用のメニューボタンを含む */}
         <div className="flex items-center p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-          <button 
+          <button
             onClick={() => setIsSidebarOpen(true)}
             className="mr-4 md:hidden flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             aria-label="メニューを開く"
@@ -95,10 +95,10 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, sidebar }) => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
-          <h1 className="text-xl font-bold md:hidden">IO</h1>
+          <h1 className="text-xl font-bold md:hidden">Flow</h1>
           <div className="ml-4 text-lg font-medium"># {activeChannelName}</div>
         </div>
-        
+
         {/* コンテンツ */}
         <div className="flex-1 overflow-auto">
           {children}
